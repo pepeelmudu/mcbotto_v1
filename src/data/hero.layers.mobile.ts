@@ -60,7 +60,7 @@ export const heroMobile: StageComposition = {
         {
           id: 'machine',
           kind: 'img',
-          src: '/assets/imagenes/maquina_web_v1_comp.png',
+          src: '/assets/imagenes/maquina_web_v2.png',
           alt: 'Maquina de pedidos McBotto',
           psd: { x: 0, y: 0, w: MACHINE_CANVAS.w, h: MACHINE_CANVAS.h },
           z: 2,
@@ -72,7 +72,7 @@ export const heroMobile: StageComposition = {
           kind: 'img',
           src: '/assets/imagenes/rana_web_1.png',
           alt: 'Rana coleccionable McBotto',
-          psd: { x: 1438, y: 80, w: 1583, h: 2267 },
+          psd: { x: 1338, y: 500, w: 1425, h: 2040 },
           z: 1,
           fit: 'contain',
           anim: { type: 'slide-right', delay: 400, duration: 900 },
@@ -83,7 +83,7 @@ export const heroMobile: StageComposition = {
           kind: 'img',
           src: '/assets/imagenes/ticket_web_v1_comp.png',
           alt: 'Ticket McBotto',
-          psd: { x: -1100, y: 80, w: 1000, h: 1500 },
+          psd: { x: -1400, y: 1200, w: 1000, h: 1500 },
           z: 1,
           fit: 'contain',
           anim: { type: 'slide-left', delay: 400, duration: 900 },
@@ -100,7 +100,6 @@ export const heroMobile: StageComposition = {
       psd: { x: 40, y: 2150, w: 1000, h: 680 },
       z: 6,
       fit: 'contain',
-      anim: { type: 'slide-up', delay: 600, duration: 1000 },
     },
     // Fries izquierda (v2): 100px mas arriba. z:3 para estar sobre el overlay rojo.
     {

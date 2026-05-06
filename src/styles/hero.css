@@ -42,6 +42,11 @@
   object-fit: contain;
 }
 
+/* Ticket: sombra paralela + hue rotado a azul (~200°) */
+.stage--hero .layer[data-id='ticket'] > img {
+  filter: hue-rotate(220deg) drop-shadow(8px 10px 12px rgba(0, 0, 0, 0.45));
+}
+
 /* Seccion amarilla vacia debajo del hero */
 .yellow-section {
   width: 100%;

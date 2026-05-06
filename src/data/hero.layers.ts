@@ -77,7 +77,7 @@ export const heroDesktop: StageComposition = {
         {
           id: 'machine',
           kind: 'img',
-          src: '/assets/imagenes/maquina_web_v1_comp.png',
+          src: '/assets/imagenes/maquina_web_v2.png',
           alt: 'Maquina de pedidos McBotto',
           psd: { x: 0, y: 0, w: MACHINE_CANVAS.w, h: MACHINE_CANVAS.h },
           z: 2,
@@ -90,7 +90,7 @@ export const heroDesktop: StageComposition = {
           alt: 'Rana coleccionable McBotto',
           // x=1438: 150 hero-px mas lejos (150*(1154/672)=258 mc-px, 1180+258=1438).
           // w y h x1.5 respecto a los valores anteriores (1055→1583, 1511→2267).
-          psd: { x: 1438, y: 80, w: 1583, h: 2267 },
+          psd: { x: 1338, y: 500, w: 1425, h: 2040 },
           z: 1,
           fit: 'contain',
           anim: { type: 'slide-right', delay: 400, duration: 900 },
@@ -103,7 +103,7 @@ export const heroDesktop: StageComposition = {
           kind: 'img',
           src: '/assets/imagenes/ticket_web_v1_comp.png',
           alt: 'Ticket McBotto',
-          psd: { x: -600, y: 600, w: 500, h: 750 },
+          psd: { x: -900, y: 1200, w: 650, h: 975 },
           z: 1,
           fit: 'contain',
           anim: { type: 'slide-left', delay: 400, duration: 900 },
@@ -122,7 +122,6 @@ export const heroDesktop: StageComposition = {
       psd: { x: -440, y: 2100, w: 2800, h: 1900 },
       z: 6,
       fit: 'contain',
-      anim: { type: 'slide-up', delay: 600, duration: 1000 },
     },
     // Patatas izquierda (v2): 100px mas arriba → y:1532. z:3 para estar sobre el overlay rojo.
     {
