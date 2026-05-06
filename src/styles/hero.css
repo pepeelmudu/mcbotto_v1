@@ -1,0 +1,56 @@
+.hero {
+  position: relative;
+  width: 100%;
+  /*
+   * isolation: isolate crea un stacking context en .hero.
+   * Esto garantiza que los z-index de los layers (ketchup z:1, rojo z:2,
+   * patatas z:3, maquina z:4, logo z:5) se resuelvan DENTRO del hero
+   * sin interferencia de elementos externos.
+   */
+  isolation: isolate;
+  background: var(--color-yellow);
+  padding-top: var(--marquee-height, 2rem);
+}
+
+/*
+ * Overlay rojo con borde superior DIAGONAL (mas alto por la derecha).
+ * Izquierda: 42%, derecha: 37% → la linea sube de izquierda a derecha.
+ * z-index: 2 → encima del ketchup (z:1) pero debajo de patatas (z:3)
+ *              y la maquina/rana (z:4).
+ */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-red);
+  clip-path: polygon(0 42%, 100% 37%, 100% 100%, 0 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.stage--hero {
+  background: transparent;
+}
+
+/* La pantalla de la maquina con un fallback negro mientras carga el video */
+.stage--hero .layer[data-id='screen'] > video {
+  background: #000;
+}
+
+/* Logo: si llega a fallar el SVG, no queremos un alt text gigante */
+.stage--hero .layer[data-id='logo'] > img {
+  object-fit: contain;
+}
+
+/* Seccion amarilla vacia debajo del hero */
+.yellow-section {
+  width: 100%;
+  min-height: 60vh;
+  background: var(--color-yellow);
+}
+
+@media (max-width: 768px) {
+  .hero::after {
+    clip-path: polygon(0 42%, 100% 36%, 100% 100%, 0 100%);
+  }
+}

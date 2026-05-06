@@ -1,0 +1,43 @@
+:root {
+  --color-red: #e41d22;
+  --color-yellow: #ffc700;
+  --color-black: #0a0a0a;
+  --color-white: #ffffff;
+
+  --color-bg: var(--color-yellow);
+  --color-bg-alt: var(--color-red);
+  --color-fg: var(--color-black);
+  --color-fg-muted: rgba(10, 10, 10, 0.65);
+  --color-accent: var(--color-red);
+  --color-accent-2: var(--color-yellow);
+
+  --font-sans: 'Speedee', system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Speedee', system-ui, sans-serif;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  --bp-mobile: 768px;
+  --bp-tablet: 1024px;
+
+  --hero-aspect-desktop: 1920 / 3100;
+  --hero-aspect-mobile: 1080 / 3500;
+  --hero-canvas-w-desktop: 1920;
+  --hero-canvas-h-desktop: 1080;
+  --hero-canvas-w-mobile: 1080;
+  --hero-canvas-h-mobile: 1920;
+
+  --marquee-height: 2rem;
+}

@@ -1,0 +1,9 @@
+@font-face {
+  font-family: 'Speedee';
+  src: url('/assets/fonts/Speedee-Bold.ttf') format('truetype');
+  /* El archivo es Speedee-Bold pero declaramos un rango amplio para que
+     el browser use esta fuente sin importar el font-weight pedido. */
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}

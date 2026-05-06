@@ -1,0 +1,53 @@
+.anim {
+  --anim-duration: 900ms;
+  --anim-delay: 0ms;
+  --anim-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  transition:
+    opacity var(--anim-duration) var(--anim-easing) var(--anim-delay),
+    transform var(--anim-duration) var(--anim-easing) var(--anim-delay);
+  will-change: opacity, transform;
+}
+
+.anim--fade {
+  transform: none;
+}
+
+.anim--slide-left {
+  transform: translate3d(-8%, 0, 0);
+}
+
+.anim--slide-right {
+  transform: translate3d(8%, 0, 0);
+}
+
+.anim--slide-up {
+  transform: translate3d(0, 8%, 0);
+}
+
+.anim--slide-down {
+  transform: translate3d(0, -8%, 0);
+}
+
+.anim--zoom {
+  transform: scale(0.92);
+}
+
+.anim.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Tras la animacion, soltamos will-change para no quemar memoria/GPU. */
+.anim.is-visible {
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}

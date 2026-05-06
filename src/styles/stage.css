@@ -1,0 +1,95 @@
+.stage {
+  position: relative;
+  width: 100%;
+  margin-inline: auto;
+  overflow: hidden;
+  background: transparent;
+}
+
+/*
+ * Cualquier elemento .layer (sea hijo directo del stage o anidado dentro
+ * de otro layer--group) se posiciona absolutamente respecto a su contenedor.
+ * El contenedor establece el sistema de coords para sus hijos.
+ */
+.layer {
+  position: absolute;
+  pointer-events: none;
+}
+
+.layer.is-interactive {
+  pointer-events: auto;
+}
+
+.layer > img,
+.layer > video,
+.layer > svg,
+.layer > picture {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.layer.fit-contain > img,
+.layer.fit-contain > video {
+  object-fit: contain;
+}
+
+/*
+ * Layer "mask": el SVG se aplica como mask-image y el background del wrapper
+ * se pinta con --layer-tint, recoloreando la silueta. Solo funciona con
+ * SVG real (no PDFs renombrados) y es ideal para logos monocromaticos.
+ */
+.layer.layer--mask {
+  background-color: var(--layer-tint, currentColor);
+  -webkit-mask-image: var(--layer-mask);
+  mask-image: var(--layer-mask);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+/*
+ * Group: contiene layers anidadas que comparten escalado. Las hijas usan
+ * coords relativas al canvas del grupo (definido en el LayerSpec). Cuando
+ * el grupo cambia de tamano, todas las hijas escalan juntas.
+ */
+.layer.layer--group {
+  /* overflow visible por default: si querés que los hijos no se salgan,
+     ponele overflow:hidden via className o regla puntual */
+}
+
+.stage--hero {
+  aspect-ratio: var(--hero-aspect-desktop);
+  max-width: 1920px;
+  min-height: 100svh;
+  /* La maquina es muy alta (1:3.27): dejamos que se vea mas alla del box */
+  overflow: visible;
+}
+
+@media (max-width: 768px) {
+  .stage--hero {
+    aspect-ratio: var(--hero-aspect-mobile);
+    max-width: 100vw;
+  }
+}
+
+.stage-debug .layer {
+  outline: 1px dashed rgba(255, 0, 128, 0.6);
+}
+
+.stage-debug .layer::after {
+  content: attr(data-id);
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-family: ui-monospace, monospace;
+  background: rgba(255, 0, 128, 0.85);
+  color: #fff;
+  pointer-events: none;
+}

@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/vite-env.d.ts","./src/data/collection.layers.ts","./src/data/hero.layers.mobile.ts","./src/data/hero.layers.ts","./src/lib/audio.ts","./src/lib/scrollanim.ts","./src/lib/stage.ts","./src/sections/collection.ts","./src/sections/hero.ts","./src/sections/marquee.ts","./vite.config.ts"],"version":"5.9.3"}

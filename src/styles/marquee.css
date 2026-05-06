@@ -1,0 +1,53 @@
+.marquee {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  background: transparent;
+  color: var(--color-red);
+  font-family: 'Speedee', var(--font-display);
+  font-weight: 700;
+  font-style: normal;
+  text-transform: uppercase;
+  font-size: clamp(0.72rem, 1vw, 0.88rem);
+  letter-spacing: 0.04em;
+  padding-block: 0.5rem;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+}
+
+.marquee__viewport {
+  display: flex;
+  width: max-content;
+  /*
+   * Anima exactamente -100/copies % → mueve 1 grupo hacia la izquierda.
+   * Al reiniciar, el siguiente grupo esta exactamente en el lugar del anterior.
+   * copies viene del JS como --marquee-copies (default 8).
+   */
+  --_shift: calc(-100% / var(--marquee-copies, 8));
+  animation: marquee-scroll var(--marquee-duration, 22s) linear infinite;
+}
+
+.marquee__group {
+  display: flex;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.marquee__item {
+  padding-inline: 1.4ch;
+  font-weight: 700;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(var(--_shift), 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__viewport {
+    animation: none;
+  }
+}
