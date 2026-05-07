@@ -1,5 +1,5 @@
 // v2: bump para invalidar la preferencia vieja cuando cambia el default.
-const STORAGE_KEY = 'mcbotto_audio_muted_v2';
+const STORAGE_KEY = 'mcbotto_audio_muted_v3';
 
 export type AudioToggleOptions = {
   src: string;
@@ -77,6 +77,32 @@ export function mountAudioToggle(
     }
   };
 
+  // Estrategia de autoplay:
+  // 1. Arrancamos el audio MUTEADO (los browsers permiten muted autoplay).
+  // 2. En el primer gesto del usuario (scroll, click, tecla) desmutamos si
+  //    el usuario quiere sonido. Asi el audio ya esta reproduciendose y
+  //    el desmuteo es instantaneo, sin saltos ni retrasos.
+  const startAudio = (): void => {
+    audio.muted = true; // siempre muted para el autoplay inicial
+    void audio.play().catch(() => {});
+  };
+
+  // Intentamos arrancar inmediatamente (funciona si la pagina ya tiene gesto
+  // previo o en algunos browsers permisivos).
+  startAudio();
+
+  // En el primer gesto real del usuario: desmutamos si procede.
+  const onFirstGesture = (): void => {
+    audio.muted = muted;
+    if (!muted && audio.paused) {
+      void audio.play().catch(() => {});
+    }
+  };
+  document.addEventListener('pointerdown', onFirstGesture, { once: true });
+  document.addEventListener('keydown', onFirstGesture, { once: true });
+  document.addEventListener('scroll', onFirstGesture, { once: true, passive: true });
+  document.addEventListener('touchstart', onFirstGesture, { once: true, passive: true });
+
   sync();
 
   button.addEventListener('click', () => {
@@ -84,19 +110,9 @@ export function mountAudioToggle(
     sync();
   });
 
-  // Si el usuario en una visita anterior dejo el audio activo, intentamos
-  // reanudarlo en el primer gesto que haga (autoplay con sonido necesita gesto).
-  const onFirstGesture = (): void => {
-    if (!muted) {
-      void audio.play().catch(() => {});
-    }
-  };
-  document.addEventListener('pointerdown', onFirstGesture, { once: true });
-  document.addEventListener('keydown', onFirstGesture, { once: true });
-
   audio.addEventListener('error', () => {
     console.warn(
-      `[audio] no se pudo cargar "${options.src}". Subi el archivo a public/assets/audio/ para activar la musiquilla.`
+      `[audio] no se pudo cargar "${options.src}". Comprueba que el archivo existe en public/assets/sound/.`
     );
   });
 

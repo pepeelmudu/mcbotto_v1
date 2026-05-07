@@ -1,6 +1,7 @@
 import { renderStage, type StageComposition } from '../lib/stage';
 import { heroDesktop } from '../data/hero.layers';
 import { heroMobile } from '../data/hero.layers.mobile';
+import { openModal } from '../lib/modal';
 
 const MOBILE_QUERY = '(max-width: 768px)';
 
@@ -23,6 +24,12 @@ export function mountHero(root: HTMLElement, options: HeroOptions = {}): () => v
 
   section.append(stage);
   root.appendChild(section);
+
+  // Click en la pantalla de la maquina → abre el modal con el menu
+  section.addEventListener('click', (e) => {
+    const layer = (e.target as Element).closest('[data-id="screen"]');
+    if (layer) openModal('/assets/imagenes/menu2_low.png', 'Menu McBotto');
+  });
 
   const mql = window.matchMedia(MOBILE_QUERY);
   const draw = (): void => {

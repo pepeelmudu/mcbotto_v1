@@ -49,9 +49,9 @@ export const heroDesktop: StageComposition = {
     {
       id: 'ketchup',
       kind: 'img',
-      src: '/assets/imagenes/ketchup_1.png',
+      src: '/assets/imagenes/ketchup_0.png',
       alt: 'Ketchup McBotto',
-      psd: { x: -770, y: -740, w: 1403, h: 2856 },
+      psd: { x: -670, y: -490, w: 1122, h: 2285 },
       z: 1,
       fit: 'contain',
     },
@@ -69,10 +69,11 @@ export const heroDesktop: StageComposition = {
         {
           id: 'screen',
           kind: 'video',
-          src: '/assets/videos/patatas_v2.mp4',
+          src: '/assets/videos/patatas_v3.mp4',
           psd: SCREEN_IN_MACHINE,
           z: 1,
           fit: 'cover',
+          className: 'is-interactive',
         },
         {
           id: 'machine',
@@ -90,22 +91,20 @@ export const heroDesktop: StageComposition = {
           alt: 'Rana coleccionable McBotto',
           // x=1438: 150 hero-px mas lejos (150*(1154/672)=258 mc-px, 1180+258=1438).
           // w y h x1.5 respecto a los valores anteriores (1055→1583, 1511→2267).
-          psd: { x: 1338, y: 500, w: 1425, h: 2040 },
+          psd: { x: 1338, y: 400, w: 1425, h: 2040 },
           z: 1,
           fit: 'contain',
           anim: { type: 'slide-right', delay: 400, duration: 900 },
         },
-        // Ticket: simetrico a la rana pero al lado IZQUIERDO de la maquina (x negativo).
-        // Distancia al borde izquierdo de la maquina: ~100 machine-canvas-px.
-        // w=1000, h=1500 en machine canvas. x=-(1000+100)=-1100.
+        // Ticket animado: se reproduce al hacer hover, se congela en el ultimo frame.
         {
           id: 'ticket',
-          kind: 'img',
-          src: '/assets/imagenes/ticket_web_v1_comp.png',
-          alt: 'Ticket McBotto',
+          kind: 'video',
+          src: '/assets/animations/tikcet_seq_1.webm',
           psd: { x: -900, y: 1200, w: 650, h: 975 },
           z: 1,
           fit: 'contain',
+          hoverPlay: true,
           anim: { type: 'slide-left', delay: 400, duration: 900 },
         },
       ],
@@ -119,7 +118,39 @@ export const heroDesktop: StageComposition = {
       kind: 'img',
       src: '/assets/imagenes/menu_web_v3_comp.png',
       alt: 'Menu McBotto',
-      psd: { x: -440, y: 2100, w: 2800, h: 1900 },
+      psd: { x: -160, y: 2100, w: 2240, h: 1520 },
+      z: 6,
+      fit: 'contain',
+    },
+    // Piernas del payaso: asoman por debajo del menu, parcialmente cortadas.
+    // Centradas. y alto para que queden cortadas en la parte inferior del canvas.
+    {
+      id: 'piernas',
+      kind: 'img',
+      src: '/assets/imagenes/piernas_payaso.png',
+      alt: '',
+      psd: { x: 540, y: 3450, w: 840, h: 630 },
+      z: 5,
+      fit: 'contain',
+    },
+    // Ketchup3: arriba a la derecha del hero, cortado por borde derecho y superior.
+    {
+      id: 'ketchup3',
+      kind: 'img',
+      src: '/assets/imagenes/ketchup3.png',
+      alt: '',
+      psd: { x: 1520, y: -350, w: 900, h: 1834 },
+      z: 1,
+      fit: 'contain',
+    },
+    // Ketchup a la derecha de las piernas, cortado por el borde derecho.
+    // x:1550 → borde derecho en 1550+900=2450, cortado 530px fuera del canvas.
+    {
+      id: 'ketchup-right',
+      kind: 'img',
+      src: '/assets/imagenes/ketchup_1.png',
+      alt: '',
+      psd: { x: 1550, y: 2800, w: 900, h: 1834 },
       z: 6,
       fit: 'contain',
     },

@@ -32,6 +32,12 @@ export type LayerSpec = {
    */
   tint?: string;
   /**
+   * Solo para `kind: 'video'`. Si true, el video NO hace autoplay: arranca
+   * parado en frame 0, se reproduce al hacer hover (mouseenter) y se queda
+   * congelado en el ultimo frame cuando termina. Implica autoplay=false, loop=false.
+   */
+  hoverPlay?: boolean;
+  /**
    * Solo para `kind: 'group'`. Sub-canvas en el que viven las layers hijas.
    * Las hijas se posicionan en coords relativas a este canvas, asi cuando el
    * grupo escala, todas las hijas escalan en bloque (escalas linkeadas).
@@ -92,9 +98,47 @@ export function createLayerElement(layer: LayerSpec, canvas: Canvas): HTMLElemen
     case 'img':
       wrapper.appendChild(buildImg(layer));
       break;
-    case 'video':
-      wrapper.appendChild(buildVideo(layer));
+    case 'video': {
+      const vid = buildVideo(layer);
+      wrapper.appendChild(vid);
+      if (layer.hoverPlay) {
+        wrapper.classList.add('is-interactive');
+        wrapper.style.cursor = 'pointer';
+
+        // Oculta el video mientras el browser no haya seekado al frame 0.
+        // Esto evita que se vean frames intermedios durante el buffering.
+        vid.style.opacity = '0';
+
+        const seekToStart = () => {
+          vid.currentTime = 0;
+          vid.addEventListener('seeked', () => {
+            vid.pause();
+            vid.style.opacity = '1';
+          }, { once: true });
+        };
+
+        // Si ya tiene datos suficientes, seek inmediato; si no, espera.
+        if (vid.readyState >= 2) {
+          seekToStart();
+        } else {
+          vid.addEventListener('loadeddata', seekToStart, { once: true });
+        }
+
+        wrapper.addEventListener('mouseenter', () => {
+          vid.currentTime = 0;
+          void vid.play();
+        });
+        // Al quitar el hover: para y vuelve al frame 0.
+        wrapper.addEventListener('mouseleave', () => {
+          vid.pause();
+          vid.currentTime = 0;
+        });
+        // 'ended' → el video ya esta parado en el ultimo frame automaticamente.
+        // Si el usuario mantiene el hover lo ve congelado; si saca el raton,
+        // mouseleave lo resetea al frame 0.
+      }
       break;
+    }
     case 'svg':
       if (layer.tint) {
         // El wrapper mismo es la silueta coloreada (mask-image + background).
@@ -139,8 +183,9 @@ function buildSvgImg(layer: LayerSpec): HTMLImageElement {
 
 function buildVideo(layer: LayerSpec): HTMLVideoElement {
   const video = document.createElement('video');
-  video.autoplay = layer.autoplay ?? true;
-  video.loop = layer.loop ?? true;
+  // hoverPlay desactiva autoplay y loop; el video arranca parado en frame 0.
+  video.autoplay = layer.hoverPlay ? false : (layer.autoplay ?? true);
+  video.loop = layer.hoverPlay ? false : (layer.loop ?? true);
   video.muted = layer.muted ?? true;
   video.playsInline = layer.playsInline ?? true;
   video.preload = 'auto';
