@@ -1,5 +1,5 @@
-// v2: bump para invalidar la preferencia vieja cuando cambia el default.
-const STORAGE_KEY = 'mcbotto_audio_muted_v3';
+// v4: bump para invalidar preferencias viejas que dejaban el audio muted.
+const STORAGE_KEY = 'mcbotto_audio_muted_v4';
 
 export type AudioToggleOptions = {
   src: string;
@@ -51,15 +51,18 @@ export function mountAudioToggle(
 
   const persisted = readPersisted();
   let muted = persisted ?? options.startMuted ?? true;
-  audio.muted = muted;
+  // Empezamos siempre muted para maximizar las posibilidades de autoplay.
+  // El primer gesto del usuario nos permite desmutar.
+  audio.muted = true;
 
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'audio-toggle';
   button.dataset.muted = String(muted);
 
-  const sync = (): void => {
-    audio.muted = muted;
+  // Solo actualiza UI; el estado de muted/play se gestiona en startAudio +
+  // onUserInteraction para no romper el autoplay con cambios prematuros.
+  const syncUI = (): void => {
     button.dataset.muted = String(muted);
     button.setAttribute('aria-pressed', String(!muted));
     button.setAttribute(
@@ -68,46 +71,88 @@ export function mountAudioToggle(
     );
     button.innerHTML = renderIcon(muted);
     persist(muted);
+  };
+
+  // Cambio explícito desde el botón / API: aquí sí tocamos audio porque
+  // ya hay un gesto del usuario.
+  const syncAudio = (): void => {
+    syncUI();
+    audio.muted = muted;
     if (!muted) {
-      void audio.play().catch(() => {
-        /* el browser puede bloquear hasta el siguiente gesto */
-      });
+      void audio.play().catch(() => {});
     } else {
       audio.pause();
     }
   };
 
-  // Estrategia de autoplay:
-  // 1. Arrancamos el audio MUTEADO (los browsers permiten muted autoplay).
-  // 2. En el primer gesto del usuario (scroll, click, tecla) desmutamos si
-  //    el usuario quiere sonido. Asi el audio ya esta reproduciendose y
-  //    el desmuteo es instantaneo, sin saltos ni retrasos.
-  const startAudio = (): void => {
-    audio.muted = true; // siempre muted para el autoplay inicial
+  // Estrategia agresiva de autoplay:
+  // 1. Intento play() SIN muted (si el browser permite, suena desde el inicio)
+  // 2. Si falla, intento play() muted (autoplay permitido siempre)
+  // 3. Cualquier interacción del usuario (incluso movimiento del ratón)
+  //    desmutea inmediatamente.
+  const tryPlayUnmuted = async (): Promise<boolean> => {
+    if (muted) return false;
+    try {
+      audio.muted = false;
+      await audio.play();
+      return true;
+    } catch {
+      audio.muted = true;
+      return false;
+    }
+  };
+
+  const startAudio = async (): Promise<void> => {
+    const unmutedOK = await tryPlayUnmuted();
+    if (unmutedOK) return;
+    // Fallback: muted autoplay (siempre permitido)
+    audio.muted = true;
     void audio.play().catch(() => {});
   };
 
-  // Intentamos arrancar inmediatamente (funciona si la pagina ya tiene gesto
-  // previo o en algunos browsers permisivos).
-  startAudio();
+  void startAudio();
 
-  // En el primer gesto real del usuario: desmutamos si procede.
-  const onFirstGesture = (): void => {
-    audio.muted = muted;
-    if (!muted && audio.paused) {
+  let unmuted = false;
+  const onUserInteraction = (): void => {
+    if (unmuted || muted) return;
+    unmuted = true;
+    audio.muted = false;
+    if (audio.paused) {
       void audio.play().catch(() => {});
     }
+    cleanupListeners();
   };
-  document.addEventListener('pointerdown', onFirstGesture, { once: true });
-  document.addEventListener('keydown', onFirstGesture, { once: true });
-  document.addEventListener('scroll', onFirstGesture, { once: true, passive: true });
-  document.addEventListener('touchstart', onFirstGesture, { once: true, passive: true });
 
-  sync();
+  const events: Array<[string, AddEventListenerOptions | boolean]> = [
+    ['pointerdown', false],
+    ['pointermove', { passive: true }],
+    ['mousemove', { passive: true }],
+    ['mousedown', false],
+    ['keydown', false],
+    ['scroll', { passive: true }],
+    ['touchstart', { passive: true }],
+    ['touchmove', { passive: true }],
+    ['wheel', { passive: true }],
+    ['click', false],
+  ];
+
+  for (const [evt, opts] of events) {
+    document.addEventListener(evt, onUserInteraction, opts);
+    window.addEventListener(evt, onUserInteraction, opts);
+  }
+
+  const cleanupListeners = (): void => {
+    for (const [evt, opts] of events) {
+      document.removeEventListener(evt, onUserInteraction, opts as EventListenerOptions);
+      window.removeEventListener(evt, onUserInteraction, opts as EventListenerOptions);
+    }
+  };
+
+  syncUI();
 
   button.addEventListener('click', () => {
     muted = !muted;
-    sync();
+    syncAudio();
   });
 
   audio.addEventListener('error', () => {
@@ -124,16 +169,15 @@ export function mountAudioToggle(
       audio.pause();
       audio.remove();
       button.remove();
-      document.removeEventListener('pointerdown', onFirstGesture);
-      document.removeEventListener('keydown', onFirstGesture);
+      cleanupListeners();
     },
     toggle() {
       muted = !muted;
-      sync();
+      syncAudio();
     },
     setMuted(next) {
       muted = next;
-      sync();
+      syncAudio();
     },
     isMuted() {
       return muted;
