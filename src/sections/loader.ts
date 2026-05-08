@@ -28,6 +28,10 @@ export function mountLoader(
   source.type = 'video/mp4';
   video.appendChild(source);
 
+  // Intenta arrancar el audio inmediatamente (funciona si el browser lo permite).
+  // Si el browser bloquea el autoplay sin gesto, quedará muted hasta el dismiss.
+  audioController.setMuted(false);
+
   const dismiss = (): void => {
     // Paso 1: funde el video a amarillo
     overlay.classList.add('fade-yellow');
@@ -41,7 +45,7 @@ export function mountLoader(
         video.pause();
         video.style.display = 'none';
 
-        // Arranca el audio ahora que hay "gesto" implícito de la sesión
+        // Asegura que el audio esté activo al salir del loader
         audioController.setMuted(false);
 
         // Paso 2: funde el overlay a transparente
@@ -67,5 +71,7 @@ export function mountLoader(
   video.addEventListener('ended', () => clearTimeout(fallbackTimer), { once: true });
 
   overlay.appendChild(video);
-  root.prepend(overlay);
+  // Montamos en document.body (no en #app) para que z-index:9999 compita
+  // directamente con el marquee y el audio-toggle que también están en body.
+  document.body.prepend(overlay);
 }

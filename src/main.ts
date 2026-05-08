@@ -160,7 +160,7 @@ document.body.appendChild(siteLabel);
 const audioController = mountAudioToggle(document.body, {
   src: '/assets/sound/mc_sound.mp3',
   volume: 0.4,
-  startMuted: true, // empieza muted; el loader lo activa al terminar el video
+  startMuted: false,
 });
 
 // Pantalla de carga: video intro → fade amarillo → fade out → web
