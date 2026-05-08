@@ -42,7 +42,11 @@ export function mountScrollAnimSection(root: HTMLElement): void {
   const info = document.createElement('div');
   info.className = 'scrub-event-info';
   info.innerHTML = `
-    <p class="scrub-event-text scrub-event-text--large">June 4, 5, 6</p>
+    <p class="scrub-event-text scrub-event-text--large">
+      <img class="scrub-tribal scrub-tribal--left" src="/assets/vectores/tribal.svg" alt="" />
+      June 4, 5, 6 &mdash; Lisbon
+      <img class="scrub-tribal scrub-tribal--right" src="/assets/vectores/tribal.svg" alt="" />
+    </p>
     <p class="scrub-event-text">
       <a
         class="scrub-event-link"
@@ -51,6 +55,7 @@ export function mountScrollAnimSection(root: HTMLElement): void {
         rel="noopener noreferrer"
       >nonfungibleconference.com</a>
     </p>
+    <p class="scrub-event-emoji">☺</p>
   `;
 
   // ── "Get your toy at:" justo encima del vídeo, sobre el fondo rojo ──

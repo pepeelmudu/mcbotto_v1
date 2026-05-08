@@ -13,7 +13,7 @@
    * Padding en vw → escala proporcionalmente con la bandeja (que es 50vw).
    * top ≈ 5.2vw (~100px a 1920px), bottom ≈ 7vw (~134px a 1920px).
    */
-  padding: 5.2vw 0 7vw;
+  padding: 5.2vw 0 3.5vw;
 }
 
 /*
@@ -93,6 +93,13 @@
 .scrub-event-info {
   text-align: center;
   margin-top: -50px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.scrub-event-info p + p {
+  margin-top: -0.2em;
 }
 
 .scrub-event-text {
@@ -107,6 +114,10 @@
 .scrub-event-text--large {
   font-size: clamp(1.44rem, 3.6vw, 4rem);
   font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
 }
 
 .scrub-event-link {
@@ -117,6 +128,30 @@
 
 .scrub-event-link:hover {
   opacity: 0.75;
+}
+
+.scrub-tribal {
+  height: 2.1em;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 0.3em;
+}
+
+.scrub-event-text--large {
+  gap: 0.05em;
+}
+
+.scrub-tribal--right {
+  transform: scaleX(-1);
+}
+
+.scrub-event-emoji {
+  color: var(--color-yellow);
+  font-size: clamp(1.5rem, 3vw, 3.5rem);
+  text-align: center;
+  margin-top: 0.3em;
+  line-height: 1;
 }
 
 /* ── Mobile ──────────────────────────────────────────────────────────── */

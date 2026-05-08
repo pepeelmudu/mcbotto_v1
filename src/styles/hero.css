@@ -1,12 +1,6 @@
 .hero {
   position: relative;
   width: 100%;
-  /*
-   * isolation: isolate crea un stacking context en .hero.
-   * Esto garantiza que los z-index de los layers (ketchup z:1, rojo z:2,
-   * patatas z:3, maquina z:4, logo z:5) se resuelvan DENTRO del hero
-   * sin interferencia de elementos externos.
-   */
   isolation: isolate;
   background: var(--color-yellow);
   padding-top: var(--marquee-height, 2rem);
@@ -48,6 +42,12 @@
   filter: drop-shadow(6px 10px 14px rgba(0, 0, 0, 0.5));
 }
 
+/* 30 units badge: sombra paralela */
+.stage--hero .layer[data-id='30units'] > img {
+  filter: drop-shadow(5px 8px 12px rgba(0, 0, 0, 0.45));
+}
+
+
 /* Ticket: sombra paralela (ahora es un <video>) */
 .stage--hero .layer[data-id='ticket'] > video {
   filter: drop-shadow(8px 10px 12px rgba(0, 0, 0, 0.45));
@@ -75,22 +75,175 @@
   z-index: 3;
 }
 
-/* Seccion amarilla con animación TV */
+/* Seccion amarilla con redeem form + TV */
 .yellow-section {
   width: 100%;
-  min-height: 120vh;
   background: var(--color-yellow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4vw 0 2vw;
+  gap: 1.5vw;
+}
+
+/* ── Barra estática encima del footer ────────────────────────────── */
+.footer-bar {
+  width: 100%;
+  background: var(--color-yellow);
+  color: var(--color-red);
+  font-family: 'Speedee', var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.72rem, 1vw, 0.88rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding-block: 0.5rem;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+}
+
+.footer-bar__viewport {
+  display: flex;
+  width: max-content;
+  --_shift: calc(-100% / var(--marquee-copies, 6));
+  animation: marquee-scroll 22s linear infinite;
+}
+
+.footer-bar__group {
+  display: flex;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.footer-bar__item {
+  padding-inline: 1.4ch;
+}
+
+/* ── Footer rojo con logo ─────────────────────────────────────────── */
+.site-footer {
+  width: 100%;
+  background: var(--color-red);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6vw 0;
+  padding: 1.2rem 2rem;
+}
+
+.site-footer__logo {
+  height: clamp(24px, 3vw, 42px);
+  width: auto;
+  display: block;
+  filter: brightness(0) saturate(100%) invert(83%) sepia(60%) saturate(700%) hue-rotate(2deg) brightness(103%);
 }
 
 .tv-anim {
-  width: 35%;
+  width: 22%;
   height: auto;
   display: block;
   object-fit: contain;
+  margin-top: 1vw;
+}
+
+/* ── Redeem Code form ─────────────────────────────────────────────── */
+.redeem-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5vw;
+  /* Espacio lateral para que los tickets absolutos no se corten */
+  padding: 0 22vw;
+}
+
+.redeem-ticket {
+  position: absolute;
+  height: auto;
+  filter: hue-rotate(230deg) saturate(1.5) drop-shadow(3px 5px 8px rgba(0,0,0,0.3));
+}
+
+.redeem-ticket--left {
+  width: clamp(150px, 20vw, 325px);
+  right: calc(50% + 16vw);
+  bottom: -1vw;
+}
+
+.redeem-ticket--left2 {
+  width: clamp(240px, 32vw, 520px);
+  right: calc(50% + 22vw);
+  top: calc(100% + 2vw);
+}
+
+.redeem-ticket--right {
+  width: clamp(200px, 28vw, 480px);
+  left: calc(50% + 16vw);
+  top: 4vw;
+}
+
+.redeem-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border: 3px solid var(--color-red);
+  border-radius: 2rem;
+  padding: 2rem 2.5rem;
+}
+
+.redeem-title {
+  font-family: 'Speedee', var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.6rem, 3vw, 3.5rem);
+  color: var(--color-red);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.redeem-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+}
+
+.redeem-input {
+  font-family: 'Speedee', var(--font-display);
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  padding: calc(0.65rem + 3px) 1.2rem calc(0.65rem - 3px);
+  border: 3px solid var(--color-red);
+  border-radius: 999px;
+  background: var(--color-yellow);
+  color: var(--color-red);
+  outline: none;
+  width: clamp(200px, 28vw, 380px);
+  text-align: center;
+}
+
+.redeem-input::placeholder {
+  color: var(--color-red);
+  opacity: 0.6;
+  text-align: center;
+}
+
+.redeem-input:focus {
+  background: #fff;
+}
+
+.redeem-btn {
+  font-family: 'Speedee', var(--font-display);
+  font-weight: 900;
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  padding: calc(0.65rem + 3px) 2rem calc(0.65rem - 3px);
+  background: var(--color-red);
+  color: var(--color-yellow);
+  border: 3px solid var(--color-red);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.redeem-btn:hover {
+  opacity: 0.85;
 }
 
 @media (max-width: 768px) {
@@ -102,5 +255,37 @@
 @media (max-width: 768px) {
   .hero::after {
     clip-path: polygon(0 42%, 100% 36%, 100% 100%, 0 100%);
+  }
+}
+
+/* ── Interrogante flotante (fuera del stacking context del hero) ─── */
+/*
+ * El interrogante se renderiza fuera de .hero para que pueda estar
+ * por encima del bloque rojo (.scrub-section) con z-index propio.
+ * Canvas desktop: 1920×3100. Posicion PSD: x:50 y:3700 w:780 h:780
+ * top = marquee-height + (y / canvas_w * 100vw) = marquee + 3700/1920*100vw
+ */
+.interrogante-float {
+  position: absolute;
+  top: calc(var(--marquee-height, 2rem) + 187.5vw);
+  left: 2.6vw;
+  width: 40.6vw;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.interrogante-float img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(4px 6px 8px rgba(0,0,0,0.45));
+}
+
+@media (max-width: 768px) {
+  /* Canvas mobile: 1080×3500. Posicion PSD: x:20 y:2900 w:570 h:570 */
+  .interrogante-float {
+    top: calc(var(--marquee-height, 2rem) + 268.5vw);
+    left: 1.85vw;
+    width: 52.8vw;
   }
 }

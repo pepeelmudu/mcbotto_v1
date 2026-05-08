@@ -61,7 +61,7 @@ export const heroMobile: StageComposition = {
         {
           id: 'machine',
           kind: 'img',
-          src: '/assets/imagenes/maquina_web_v2.png',
+          src: '/assets/imagenes/maquina_web_v2_comp.png',
           alt: 'Maquina de pedidos McBotto',
           psd: { x: 0, y: 0, w: MACHINE_CANVAS.w, h: MACHINE_CANVAS.h },
           z: 2,
@@ -71,12 +71,23 @@ export const heroMobile: StageComposition = {
         {
           id: 'rana',
           kind: 'img',
-          src: '/assets/imagenes/rana_web_1.png',
+          src: '/assets/imagenes/rana_web_1_comp.png',
           alt: 'Rana coleccionable McBotto',
-          psd: { x: 1338, y: 400, w: 1425, h: 2040 },
+          psd: { x: 1338, y: 400, w: 1200, h: 1718 },
           z: 1,
           fit: 'contain',
           anim: { type: 'slide-right', delay: 400, duration: 900 },
+        },
+        // Badge "30 units" encima de la rana.
+        {
+          id: '30units',
+          kind: 'img',
+          src: '/assets/imagenes/30_units.png',
+          alt: '30 units',
+          psd: { x: 1430, y: 1300, w: 400, h: 400 },
+          z: 3,
+          fit: 'contain',
+          anim: { type: 'zoom', delay: 600, duration: 700 },
         },
         // Ticket animado hover.
         {
@@ -105,7 +116,7 @@ export const heroMobile: StageComposition = {
     {
       id: 'piernas',
       kind: 'img',
-      src: '/assets/imagenes/piernas_payaso.png',
+      src: '/assets/imagenes/piernas_payaso_comp.png',
       alt: '',
       psd: { x: 140, y: 2800, w: 800, h: 600 },
       z: 5,
@@ -128,26 +139,26 @@ export const heroMobile: StageComposition = {
       src: '/assets/imagenes/ketchup_1.png',
       alt: '',
       psd: { x: 720, y: 2450, w: 560, h: 1141 },
-      z: 6,
+      z: 1,
       fit: 'contain',
     },
-    // Fries izquierda (v2): 100px mas arriba. z:3 para estar sobre el overlay rojo.
+    // Fries izquierda (v2).
     {
       id: 'fries-left',
       kind: 'img',
       src: '/assets/imagenes/patatas_v2_comp.png',
       alt: '',
-      psd: { x: -(FRIES_W / 2), y: 1979, w: FRIES_W, h: FRIES_H },
+      psd: { x: -(FRIES_W * 0.72), y: 2050, w: FRIES_W, h: FRIES_H },
       z: 3,
       fit: 'cover',
     },
-    // Fries derecha (v4): posicion normal. z:3.
+    // Fries derecha (v4).
     {
       id: 'fries-right',
       kind: 'img',
-      src: '/assets/imagenes/patatas_v4.png',
+      src: '/assets/imagenes/patatas_v2_comp.png',
       alt: '',
-      psd: { x: 1080 - FRIES_W / 2, y: 2079, w: FRIES_W, h: FRIES_H },
+      psd: { x: 1080 - FRIES_W * 0.28, y: 2150, w: FRIES_W, h: FRIES_H },
       z: 3,
       fit: 'cover',
     },

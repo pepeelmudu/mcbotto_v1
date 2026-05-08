@@ -67,4 +67,5 @@ button {
 
 #app {
   isolation: isolate;
+  position: relative;
 }
