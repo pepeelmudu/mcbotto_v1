@@ -170,7 +170,7 @@
 .redeem-ticket--left2 {
   width: clamp(240px, 32vw, 520px);
   right: calc(50% + 22vw);
-  top: calc(100% + 2vw);
+  top: calc(100% - 4vw);
 }
 
 .redeem-ticket--right {
@@ -258,16 +258,15 @@
   }
 }
 
-/* ── Interrogante flotante (fuera del stacking context del hero) ─── */
+/* ── Interrogante: hijo de .scrub-section, posicionado relativo a ella ─── */
 /*
- * El interrogante se renderiza fuera de .hero para que pueda estar
- * por encima del bloque rojo (.scrub-section) con z-index propio.
- * Canvas desktop: 1920×3100. Posicion PSD: x:50 y:3700 w:780 h:780
- * top = marquee-height + (y / canvas_w * 100vw) = marquee + 3700/1920*100vw
+ * top negativo = sube por encima del borde superior del bloque rojo.
+ * El valor -25.5vw situa el interrogante justo en el limite hero/rojo
+ * independientemente del tamaño de pantalla (4K, HD, etc.).
  */
 .interrogante-float {
   position: absolute;
-  top: calc(var(--marquee-height, 2rem) + 187.5vw);
+  top: -25.5vw;
   left: 2.6vw;
   width: 40.6vw;
   pointer-events: none;
@@ -282,9 +281,8 @@
 }
 
 @media (max-width: 768px) {
-  /* Canvas mobile: 1080×3500. Posicion PSD: x:20 y:2900 w:570 h:570 */
   .interrogante-float {
-    top: calc(var(--marquee-height, 2rem) + 268.5vw);
+    top: -18vw;
     left: 1.85vw;
     width: 52.8vw;
   }

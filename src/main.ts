@@ -8,11 +8,13 @@ import './styles/audio.css';
 import './styles/hero.css';
 import './styles/modal.css';
 import './styles/scroll-anim-section.css';
+import './styles/loader.css';
 
 import { mountMarquee } from './sections/marquee';
 import { mountHero } from './sections/hero';
 import { mountAudioToggle } from './lib/audio';
 import { mountScrollAnimSection } from './sections/scroll-anim-section';
+import { mountLoader } from './sections/loader';
 
 const root = document.getElementById('app');
 if (!root) {
@@ -133,16 +135,20 @@ footerLogo.className = 'site-footer__logo';
 footer.appendChild(footerLogo);
 root.appendChild(footer);
 
-// Interrogante flotante: fuera del stacking context del hero,
-// para que quede por encima del bloque rojo (.scrub-section).
+// Interrogante: hijo del scrub-section para que su posicion sea
+// siempre relativa al bloque rojo (funciona en cualquier resolucion).
 const interroganteFloat = document.createElement('div');
 interroganteFloat.className = 'interrogante-float';
 const interroganteImg = document.createElement('img');
 interroganteImg.src = '/assets/imagenes/interrogante1.png';
 interroganteImg.alt = '';
 interroganteFloat.appendChild(interroganteImg);
-// Se añade al root (position:relative padre) después de los demás sections
-root.appendChild(interroganteFloat);
+const scrubSection = root.querySelector('.scrub-section') as HTMLElement | null;
+if (scrubSection) {
+  scrubSection.appendChild(interroganteFloat);
+} else {
+  root.appendChild(interroganteFloat);
+}
 
 // Etiqueta "McBotto.com" fija arriba a la izquierda
 const siteLabel = document.createElement('a');
@@ -151,8 +157,11 @@ siteLabel.className = 'site-label';
 siteLabel.textContent = 'McBotto.com';
 document.body.appendChild(siteLabel);
 
-mountAudioToggle(document.body, {
+const audioController = mountAudioToggle(document.body, {
   src: '/assets/sound/mc_sound.mp3',
   volume: 0.4,
-  startMuted: false,
+  startMuted: true, // empieza muted; el loader lo activa al terminar el video
 });
+
+// Pantalla de carga: video intro → fade amarillo → fade out → web
+mountLoader(root, audioController);

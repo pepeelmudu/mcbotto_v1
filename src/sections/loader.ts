@@ -1,0 +1,71 @@
+import type { AudioController } from '../lib/audio';
+
+/**
+ * Pantalla de carga:
+ * 1. Video carga_1.mp4 a pantalla completa
+ * 2. Al terminar el video → funde a amarillo (#ffc700)
+ * 3. Cuando acaba el fade a amarillo → funde a transparente y arranca el audio
+ * 4. Cuando acaba el fade out → elimina el overlay del DOM
+ */
+export function mountLoader(
+  root: HTMLElement,
+  audioController: AudioController
+): void {
+  const overlay = document.createElement('div');
+  overlay.className = 'loader-overlay';
+
+  const video = document.createElement('video');
+  video.className = 'loader-video';
+  video.muted = true;
+  video.autoplay = true;
+  video.playsInline = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('autoplay', '');
+  video.setAttribute('playsinline', '');
+
+  const source = document.createElement('source');
+  source.src = '/assets/videos/carga_1.mp4';
+  source.type = 'video/mp4';
+  video.appendChild(source);
+
+  const dismiss = (): void => {
+    // Paso 1: funde el video a amarillo
+    overlay.classList.add('fade-yellow');
+
+    overlay.addEventListener(
+      'transitionend',
+      (e) => {
+        if ((e as TransitionEvent).propertyName !== 'background-color') return;
+
+        // Oculta el video (ya no se necesita)
+        video.pause();
+        video.style.display = 'none';
+
+        // Arranca el audio ahora que hay "gesto" implícito de la sesión
+        audioController.setMuted(false);
+
+        // Paso 2: funde el overlay a transparente
+        overlay.classList.add('fade-out');
+
+        overlay.addEventListener(
+          'transitionend',
+          (e2) => {
+            if ((e2 as TransitionEvent).propertyName !== 'opacity') return;
+            overlay.remove();
+          },
+          { once: true }
+        );
+      },
+      { once: true }
+    );
+  };
+
+  video.addEventListener('ended', dismiss, { once: true });
+
+  // Fallback: si el video no carga en 8s, descartamos el loader
+  const fallbackTimer = setTimeout(dismiss, 8000);
+  video.addEventListener('ended', () => clearTimeout(fallbackTimer), { once: true });
+
+  overlay.appendChild(video);
+  root.prepend(overlay);
+}
