@@ -123,17 +123,17 @@ export function mountAudioToggle(
     cleanupListeners();
   };
 
+  // IMPORTANTE: Chrome solo considera "user gesture" estos eventos:
+  // click, mouseup, pointerup, touchend, keyup, keydown.
+  // mousemove/scroll/wheel NO sirven para desbloquear autoplay.
   const events: Array<[string, AddEventListenerOptions | boolean]> = [
-    ['pointerdown', false],
-    ['pointermove', { passive: true }],
-    ['mousemove', { passive: true }],
-    ['mousedown', false],
-    ['keydown', false],
-    ['scroll', { passive: true }],
-    ['touchstart', { passive: true }],
-    ['touchmove', { passive: true }],
-    ['wheel', { passive: true }],
     ['click', false],
+    ['mouseup', false],
+    ['pointerup', false],
+    ['touchend', { passive: true }],
+    ['touchstart', { passive: true }],
+    ['keydown', false],
+    ['keyup', false],
   ];
 
   for (const [evt, opts] of events) {
