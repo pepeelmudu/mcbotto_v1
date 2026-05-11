@@ -49,7 +49,7 @@ export const heroDesktop: StageComposition = {
     {
       id: 'ketchup',
       kind: 'img',
-      src: '/assets/imagenes/ketchup_0.png',
+      src: '/assets/imagenes/ketchup_0_comp.png',
       alt: 'Ketchup McBotto',
       psd: { x: -670, y: -490, w: 1122, h: 2285 },
       z: 1,
@@ -98,7 +98,7 @@ export const heroDesktop: StageComposition = {
         {
           id: '30units',
           kind: 'img',
-          src: '/assets/imagenes/30_units.png',
+          src: '/assets/imagenes/30_units_comp.png',
           alt: '30 units',
           psd: { x: 1430, y: 1310, w: 500, h: 500 },
           z: 3,
@@ -146,7 +146,7 @@ export const heroDesktop: StageComposition = {
     {
       id: 'ketchup3',
       kind: 'img',
-      src: '/assets/imagenes/ketchup3.png',
+      src: '/assets/imagenes/ketchup3_comp.png',
       alt: '',
       psd: { x: 1520, y: -350, w: 900, h: 1834 },
       z: 1,
@@ -157,7 +157,7 @@ export const heroDesktop: StageComposition = {
     {
       id: 'ketchup-right',
       kind: 'img',
-      src: '/assets/imagenes/ketchup_1.png',
+      src: '/assets/imagenes/ketchup_1_comp.png',
       alt: '',
       psd: { x: 1200, y: 2400, w: 1440, h: 2934 },
       z: 1,

@@ -117,7 +117,7 @@
 }
 
 .footer-bar__item {
-  padding-inline: 1.4ch;
+  font-weight: 700;
 }
 
 /* ── Footer rojo con logo ─────────────────────────────────────────── */
@@ -158,7 +158,7 @@
 .redeem-ticket {
   position: absolute;
   height: auto;
-  filter: hue-rotate(230deg) saturate(1.5) drop-shadow(3px 5px 8px rgba(0,0,0,0.3));
+  filter: drop-shadow(3px 5px 8px rgba(0,0,0,0.3));
 }
 
 .redeem-ticket--left {

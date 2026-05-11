@@ -71,12 +71,12 @@ export function mountScrollAnimSection(root: HTMLElement): void {
   // Manchas de mostaza a los lados de la bandeja
   const mostazaLeft = document.createElement('img');
   mostazaLeft.className = 'scrub-mostaza scrub-mostaza--left';
-  mostazaLeft.src = '/assets/imagenes/mostaza_1.png';
+  mostazaLeft.src = '/assets/imagenes/mostaza_1_comp.png';
   mostazaLeft.alt = '';
 
   const mostazaRight = document.createElement('img');
   mostazaRight.className = 'scrub-mostaza scrub-mostaza--right';
-  mostazaRight.src = '/assets/imagenes/mostaza_2.png';
+  mostazaRight.src = '/assets/imagenes/mostaza_2_comp.png';
   mostazaRight.alt = '';
 
   videoContainer.appendChild(mostazaLeft);

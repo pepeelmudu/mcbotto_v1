@@ -23,15 +23,21 @@ if (!root) {
 
 const debug = new URLSearchParams(window.location.search).has('debug');
 
+// Items y separador compartidos por el marquee superior y la barra inferior.
+// Usamos non-breaking spaces (\u00a0) para que HTML no colapse los espacios
+// alrededor del guion, y un em-dash "—" como caracter del separador.
+const MARQUEE_ITEMS = [
+  'New collection',
+  'Get your toy at NFC Lisbon',
+  'June 4, 5, 6',
+  'Limited edition',
+  'McBotto',
+];
+const MARQUEE_SEPARATOR = '\u00a0\u00a0\u2014\u00a0\u00a0';
+
 mountMarquee(document.body, {
-  items: [
-    'New collection',
-    'Get your toy at NFC Lisbon',
-    'June 4, 5, 6',
-    'Limited edition',
-    'McBotto',
-  ],
-  separator: '  -  ',
+  items: MARQUEE_ITEMS,
+  separator: MARQUEE_SEPARATOR,
   durationSeconds: 22,
 });
 
@@ -83,17 +89,17 @@ const redeemWrapper = document.createElement('div');
 redeemWrapper.className = 'redeem-wrapper';
 
 const ticketLeft = document.createElement('img');
-ticketLeft.src = '/assets/imagenes/ticket_web_v2.png';
+ticketLeft.src = '/assets/imagenes/ticket_web_v2_comp.png';
 ticketLeft.alt = '';
 ticketLeft.className = 'redeem-ticket redeem-ticket--left';
 
 const ticketRight = document.createElement('img');
-ticketRight.src = '/assets/imagenes/ticket_web_v3.png';
+ticketRight.src = '/assets/imagenes/ticket_web_v3_comp.png';
 ticketRight.alt = '';
 ticketRight.className = 'redeem-ticket redeem-ticket--right';
 
 const ticketLeft2 = document.createElement('img');
-ticketLeft2.src = '/assets/imagenes/ticket_web_v4.png';
+ticketLeft2.src = '/assets/imagenes/ticket_web_v4_comp.png';
 ticketLeft2.alt = '';
 ticketLeft2.className = 'redeem-ticket redeem-ticket--left2';
 
@@ -109,7 +115,6 @@ yellowSection.appendChild(tvVideo);
 root.appendChild(yellowSection);
 
 // Barra animada justo en el límite amarillo/rojo, idéntica al marquee de arriba
-const footerBarItems = ['New collection', 'Get your toy at NFC Lisbon', 'June 4, 5, 6', 'Limited edition', 'McBotto'];
 const footerBar = document.createElement('div');
 footerBar.className = 'footer-bar';
 const footerBarViewport = document.createElement('div');
@@ -119,7 +124,9 @@ footerBar.style.setProperty('--marquee-copies', String(copies));
 for (let i = 0; i < copies; i++) {
   const group = document.createElement('span');
   group.className = 'footer-bar__group';
-  group.innerHTML = footerBarItems.map(item => `<span class="footer-bar__item">${item}</span>`).join('');
+  group.innerHTML = MARQUEE_ITEMS
+    .map(item => `<span class="footer-bar__item">${item}${MARQUEE_SEPARATOR}</span>`)
+    .join('');
   footerBarViewport.appendChild(group);
 }
 footerBar.appendChild(footerBarViewport);
@@ -140,7 +147,7 @@ root.appendChild(footer);
 const interroganteFloat = document.createElement('div');
 interroganteFloat.className = 'interrogante-float';
 const interroganteImg = document.createElement('img');
-interroganteImg.src = '/assets/imagenes/interrogante1.png';
+interroganteImg.src = '/assets/imagenes/interrogante1_comp.png';
 interroganteImg.alt = '';
 interroganteFloat.appendChild(interroganteImg);
 const scrubSection = root.querySelector('.scrub-section') as HTMLElement | null;

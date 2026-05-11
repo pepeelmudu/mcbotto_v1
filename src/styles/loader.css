@@ -26,3 +26,11 @@
   object-fit: cover;
   display: block;
 }
+
+/* Mientras el loader está activo, oculta marquee/audio-toggle/site-label
+ * para que nada del header asome encima del video o del fundido amarillo. */
+body.loader-active .marquee,
+body.loader-active .audio-toggle,
+body.loader-active .site-label {
+  visibility: hidden;
+}

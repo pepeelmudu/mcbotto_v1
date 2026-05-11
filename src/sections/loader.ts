@@ -74,4 +74,16 @@ export function mountLoader(
   // Montamos en document.body (no en #app) para que z-index:9999 compita
   // directamente con el marquee y el audio-toggle que también están en body.
   document.body.prepend(overlay);
+
+  // Marca body para ocultar marquee/audio-toggle/site-label mientras dura el loader.
+  document.body.classList.add('loader-active');
+
+  // Cuando el overlay se elimine, quitamos la clase para revelar el header.
+  const observer = new MutationObserver(() => {
+    if (!document.body.contains(overlay)) {
+      document.body.classList.remove('loader-active');
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.body, { childList: true });
 }

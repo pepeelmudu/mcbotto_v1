@@ -99,7 +99,7 @@
 }
 
 .scrub-event-info p + p {
-  margin-top: -0.2em;
+  margin-top: -0.6em;
 }
 
 .scrub-event-text {
@@ -150,7 +150,7 @@
   color: var(--color-yellow);
   font-size: clamp(1.5rem, 3vw, 3.5rem);
   text-align: center;
-  margin-top: 0.3em;
+  margin-top: 1em;
   line-height: 1;
 }
 
