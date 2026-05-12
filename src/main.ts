@@ -171,4 +171,4 @@ const audioController = mountAudioToggle(document.body, {
 });
 
 // Pantalla de carga: video intro → fade amarillo → fade out → web
-mountLoader(root, audioController);
+mountLoader(audioController);

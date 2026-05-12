@@ -7,10 +7,7 @@ import type { AudioController } from '../lib/audio';
  * 3. Cuando acaba el fade a amarillo → funde a transparente y arranca el audio
  * 4. Cuando acaba el fade out → elimina el overlay del DOM
  */
-export function mountLoader(
-  root: HTMLElement,
-  audioController: AudioController
-): void {
+export function mountLoader(audioController: AudioController): void {
   const overlay = document.createElement('div');
   overlay.className = 'loader-overlay';
 
