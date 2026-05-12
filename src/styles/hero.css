@@ -131,7 +131,7 @@
 }
 
 .site-footer__logo {
-  height: clamp(24px, 3vw, 42px);
+  height: clamp(32px, 4vw, 56px);
   width: auto;
   display: block;
   filter: brightness(0) saturate(100%) invert(83%) sepia(60%) saturate(700%) hue-rotate(2deg) brightness(103%);

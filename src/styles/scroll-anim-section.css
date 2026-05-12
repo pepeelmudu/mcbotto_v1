@@ -98,7 +98,7 @@
   gap: 0;
 }
 
-.scrub-event-info p + p {
+.scrub-event-info .scrub-event-text + .scrub-event-text {
   margin-top: -0.6em;
 }
 
@@ -150,7 +150,7 @@
   color: var(--color-yellow);
   font-size: clamp(1.5rem, 3vw, 3.5rem);
   text-align: center;
-  margin-top: 1em;
+  margin-top: calc(0.3em + 15px);
   line-height: 1;
 }
 

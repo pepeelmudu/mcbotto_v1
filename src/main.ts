@@ -136,7 +136,7 @@ root.appendChild(footerBar);
 const footer = document.createElement('footer');
 footer.className = 'site-footer';
 const footerLogo = document.createElement('img');
-footerLogo.src = '/assets/vectores/bottom.svg';
+footerLogo.src = '/assets/vectores/bottom_2.svg';
 footerLogo.alt = 'McBotto';
 footerLogo.className = 'site-footer__logo';
 footer.appendChild(footerLogo);
