@@ -43,7 +43,7 @@ mountMarquee(document.body, {
 
 mountHero(root, { debug });
 
-// Sección roja con scroll-scrubbing de patatas_seq_2 + texto del evento
+// Sección roja con la animación de la bandeja + texto del evento
 mountScrollAnimSection(root);
 
 // Seccion amarilla con animación tv_seq centrada
