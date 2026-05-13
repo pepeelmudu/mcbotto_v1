@@ -21,8 +21,13 @@ export function mountScrollAnimSection(root: HTMLElement): void {
   video.setAttribute('muted', '');
   video.setAttribute('playsinline', '');
 
+  // En mobile servimos una version del WebM con el fondo del color de la web
+  // ya quemado (iOS no soporta alpha en WebM).
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const source = document.createElement('source');
-  source.src = '/assets/animations/bandeja_seq_1.webm';
+  source.src = isMobile
+    ? '/assets/animations/bandeja_seq_1_movil.webm'
+    : '/assets/animations/bandeja_seq_1.webm';
   source.type = 'video/webm';
   video.appendChild(source);
 

@@ -60,8 +60,13 @@ tvVideo.setAttribute('muted', '');
 tvVideo.setAttribute('loop', '');
 tvVideo.setAttribute('autoplay', '');
 tvVideo.setAttribute('playsinline', '');
+// En mobile servimos la version con fondo amarillo quemado (iOS no soporta
+// alpha en WebM).
+const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
 const tvSource = document.createElement('source');
-tvSource.src = '/assets/animations/tv_seq.webm';
+tvSource.src = isMobileViewport
+  ? '/assets/animations/tv_seq_movil.webm'
+  : '/assets/animations/tv_seq.webm';
 tvSource.type = 'video/webm';
 tvVideo.appendChild(tvSource);
 
@@ -136,7 +141,7 @@ ticketVideo.setAttribute('playsinline', '');
 ticketVideo.style.cssText =
   'position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
 const ticketVideoSource = document.createElement('source');
-ticketVideoSource.src = '/assets/animations/tikcet_seq_1.webm';
+ticketVideoSource.src = '/assets/animations/tikcet_seq_1_movil.webm';
 ticketVideoSource.type = 'video/webm';
 ticketVideo.appendChild(ticketVideoSource);
 document.body.appendChild(ticketVideo);

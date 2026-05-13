@@ -313,7 +313,9 @@
     aspect-ratio: 650 / 975;
     object-fit: contain;
     cursor: pointer;
-    filter: drop-shadow(4px 6px 10px rgba(0,0,0,0.45));
+    /* Sin sombra paralela en mobile (el alpha del WebM no es perfecto en iOS
+       y la sombra puede generar bordes raros). */
+    filter: none;
     order: -1;
   }
 
@@ -357,14 +359,13 @@
 
 @media (max-width: 768px) {
   .interrogante-float {
-    /* Centrada horizontalmente. Con top negativo asoma por encima del top
-       del scrub-section (que solapa con el hero) para acercarla a las
-       piernas. El padding-top del scrub-section deja un espacio similar
-       hasta "Get your toy at:". */
-    top: -18vw;
+    /* Burguer 1.5x mas grande (55→82.5vw). Subimos el top para mantener el
+       hueco con las piernas; el padding-top del scrub-section se aumenta
+       para conservar el hueco con "Get your toy at:". */
+    top: -25vw;
     left: 50%;
     transform: translateX(-50%);
-    width: 55vw;
+    width: 82.5vw;
     z-index: 5;
   }
 }

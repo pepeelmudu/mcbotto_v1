@@ -161,10 +161,9 @@
     /* margin-top negativo: solapamos un poco con el hero para asegurar que
        no queda ninguna franja amarilla intermedia. */
     margin-top: -1vw;
-    /* padding-top: la burguer interrogante tiene top:-18vw y altura ~55vw,
-       asi que su bottom queda ~37vw del top del scrub. Le dejamos el mismo
-       gap (~10vw) al "Get your toy at:" → padding-top = 47vw. */
-    padding: 47vw 0 14vw;
+    /* padding-top: burguer 82.5vw con top:-25vw → bottom ~57.5vw del top
+       del scrub. Mas ~10vw de hueco al titular = 67.5vw. */
+    padding: 68vw 0 14vw;
   }
 
   .scrub-content {
@@ -175,9 +174,10 @@
     width: 78%;
   }
 
-  /* Sombra mas suave en mobile */
+  /* Sin sombra paralela en mobile (el alpha del WebM en iOS no es perfecto y
+     la sombra le genera halo). */
   .scrub-video {
-    filter: drop-shadow(4px 6px 10px rgba(0, 0, 0, 0.45));
+    filter: none;
   }
 
   /* Area clickable mas pequena: no podemos restar 200px del borde */

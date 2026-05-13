@@ -127,14 +127,16 @@ export const heroMobile: StageComposition = {
       z: 3,
       fit: 'cover',
     },
-    // Menu: ancho casi completo, solapando la base de la maquina.
-    // Ratio menu (2240/1520=1.47). w=1080 (full width), h=735.
+    // Menu: 1.5x mas grande que el ancho del canvas (asoma por los lados).
+    // Ratio menu (2240/1520=1.47). w=1620 (1080 x 1.5), h=1102 (735 x 1.5).
+    // Base aprox. donde estaba antes (y_bottom~2885) para que las piernas
+    // sigan asomando justo debajo.
     {
       id: 'menu',
       kind: 'img',
       src: '/assets/imagenes/menu_web_v3_comp.png',
       alt: 'Menu McBotto',
-      psd: { x: 0, y: 2150, w: 1080, h: 735 },
+      psd: { x: -270, y: 1783, w: 1620, h: 1102 },
       z: 6,
       fit: 'contain',
     },
