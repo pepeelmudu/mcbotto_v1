@@ -246,15 +246,90 @@
   opacity: 0.85;
 }
 
-@media (max-width: 768px) {
-  .tv-anim {
-    width: 75%;
-  }
+/* Ticket animado del redeem: visible solo en mobile (se activa en @media) */
+.redeem-ticket-anim {
+  display: none;
 }
 
 @media (max-width: 768px) {
+  /* ── Hero: rojo desde antes del menu, todo el bloque inferior rojo ─ */
   .hero::after {
-    clip-path: polygon(0 42%, 100% 36%, 100% 100%, 0 100%);
+    clip-path: polygon(0 42%, 100% 39%, 100% 100%, 0 100%);
+  }
+
+  /* ── Yellow section: paddings/gaps mas grandes proporcionalmente ─── */
+  .yellow-section {
+    padding: 10vw 0 6vw;
+    gap: 6vw;
+  }
+
+  /* TV mas grande en mobile */
+  .tv-anim {
+    width: 60%;
+    margin-top: 2vw;
+  }
+
+  /* ── Redeem form en mobile: stack vertical, sin tickets PNG ───────── */
+  .redeem-wrapper {
+    flex-direction: column;
+    align-items: center;
+    padding: 0 6vw;
+    gap: 10vw;
+  }
+
+  .redeem-form {
+    width: 100%;
+    max-width: 360px;
+    padding: 1.5rem 1.25rem;
+    gap: 0.75rem;
+    border-width: 2px;
+    border-radius: 1.25rem;
+  }
+
+  .redeem-title {
+    font-size: clamp(1.4rem, 6.5vw, 2rem);
+  }
+
+  .redeem-input,
+  .redeem-btn {
+    width: 100%;
+    max-width: 280px;
+    font-size: clamp(0.9rem, 4vw, 1rem);
+    padding: calc(0.6rem + 2px) 1rem calc(0.6rem - 2px);
+    border-width: 2px;
+  }
+
+  /* Tickets PNG estaticos: ocultos en mobile */
+  .redeem-ticket {
+    display: none;
+  }
+
+  /* Ticket animado encima del redeem code */
+  .redeem-ticket-anim {
+    display: block;
+    width: 55vw;
+    max-width: 280px;
+    height: auto;
+    aspect-ratio: 650 / 975;
+    object-fit: contain;
+    cursor: pointer;
+    filter: drop-shadow(4px 6px 10px rgba(0,0,0,0.45));
+    order: -1;
+  }
+
+  /* ── Footer mas legible en mobile ─────────────────────────────────── */
+  .site-footer {
+    padding: 1rem 1rem;
+  }
+
+  .site-footer__logo {
+    height: clamp(40px, 12vw, 64px);
+  }
+
+  .footer-bar {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    padding-block: 0.4rem;
   }
 }
 
@@ -282,8 +357,14 @@
 
 @media (max-width: 768px) {
   .interrogante-float {
+    /* Centrada horizontalmente. Con top negativo asoma por encima del top
+       del scrub-section (que solapa con el hero) para acercarla a las
+       piernas. El padding-top del scrub-section deja un espacio similar
+       hasta "Get your toy at:". */
     top: -18vw;
-    left: 1.85vw;
-    width: 52.8vw;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55vw;
+    z-index: 5;
   }
 }

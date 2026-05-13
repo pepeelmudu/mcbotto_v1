@@ -45,6 +45,14 @@
   to   { transform: translate3d(var(--_shift), 0, 0); }
 }
 
+@media (max-width: 768px) {
+  .marquee {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    padding-block: 0.4rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee__viewport {
     animation: none;

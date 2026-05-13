@@ -20,8 +20,12 @@ export function mountLoader(audioController: AudioController): void {
   video.setAttribute('autoplay', '');
   video.setAttribute('playsinline', '');
 
+  // En mobile (≤768px) usamos un video distinto, optimizado para vertical.
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const source = document.createElement('source');
-  source.src = '/assets/videos/carga_1.mp4';
+  source.src = isMobile
+    ? '/assets/videos/carga_3_movil.mp4'
+    : '/assets/videos/carga_1.mp4';
   source.type = 'video/mp4';
   video.appendChild(source);
 

@@ -100,6 +100,12 @@
     width: 14px;
     height: 14px;
   }
+  .site-label {
+    top: calc(var(--marquee-height, 2rem) + var(--space-2));
+    left: var(--space-3);
+    font-size: 1.2rem;
+    letter-spacing: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

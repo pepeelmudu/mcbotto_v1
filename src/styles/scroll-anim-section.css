@@ -158,11 +158,74 @@
 
 @media (max-width: 768px) {
   .scrub-section {
-    margin-top: 0;
-    padding: 8vw 0 10vw;
+    /* margin-top negativo: solapamos un poco con el hero para asegurar que
+       no queda ninguna franja amarilla intermedia. */
+    margin-top: -1vw;
+    /* padding-top: la burguer interrogante tiene top:-18vw y altura ~55vw,
+       asi que su bottom queda ~37vw del top del scrub. Le dejamos el mismo
+       gap (~10vw) al "Get your toy at:" → padding-top = 47vw. */
+    padding: 47vw 0 14vw;
+  }
+
+  .scrub-content {
+    gap: 3vw;
   }
 
   .scrub-video-container {
-    width: 80%;
+    width: 78%;
+  }
+
+  /* Sombra mas suave en mobile */
+  .scrub-video {
+    filter: drop-shadow(4px 6px 10px rgba(0, 0, 0, 0.45));
+  }
+
+  /* Area clickable mas pequena: no podemos restar 200px del borde */
+  .scrub-hit-area {
+    inset: 8vw;
+  }
+
+  /* Mostazas: menos saturadas y mas hacia afuera, mas pequeñas */
+  .scrub-mostaza {
+    width: 32vw;
+  }
+
+  .scrub-mostaza--left {
+    right: 80%;
+  }
+
+  .scrub-mostaza--right {
+    left: 80%;
+  }
+
+  /* Headline / event-info: margenes verticales proporcionales a vw */
+  .scrub-headline {
+    font-size: clamp(1.4rem, 6vw, 2.2rem);
+    margin-bottom: -3vw;
+  }
+
+  .scrub-event-info {
+    margin-top: -3vw;
+    padding-inline: 4vw;
+  }
+
+  .scrub-event-text {
+    font-size: clamp(0.85rem, 3.6vw, 1.1rem);
+  }
+
+  .scrub-event-text--large {
+    font-size: clamp(1.5rem, 6.5vw, 2.4rem);
+    gap: 0.4em;
+  }
+
+  /* Tribales mas pequenos en mobile */
+  .scrub-tribal {
+    height: 1.4em;
+    margin-top: 0.2em;
+  }
+
+  .scrub-event-emoji {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    margin-top: 0.6em;
   }
 }

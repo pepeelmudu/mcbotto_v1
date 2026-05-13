@@ -1,46 +1,59 @@
 import type { StageComposition } from '../lib/stage';
 
 // Canvas mobile vertical: 1080x3500.
+// El hero usa este aspect-ratio (1080/3500 = 0.309) en @media (max-width: 768px).
 export const HERO_CANVAS_MOBILE = { w: 1080, h: 3500 } as const;
 
+// Sub-canvas del grupo machine-assembly: dimensiones nativas del PNG de la maquina.
 const MACHINE_CANVAS = { w: 1154, h: 3777 } as const;
 
-// Maquina: w=700, h=700/0.3056=2291. Centrada: x=(1080-700)/2=190, y=330.
-const GROUP_PSD = { x: 190, y: 330, w: 700, h: 2291 };
+// Maquina centrada ocupando ~67% del ancho mobile. w=720, h=720/0.3056=2356.
+// Centrada: x=(1080-720)/2=180. y=400 (debajo del logo).
+// Borde inferior: 400+2356=2756 → dentro del canvas (3500). ✓
+const GROUP_PSD = { x: 180, y: 400, w: 720, h: 2356 };
 
-// Mismo recorte de pantalla que desktop (proporcional al video 9:16).
+// Pantalla del video (mismo recorte interno que desktop, escala automaticamente).
 const SCREEN_IN_MACHINE = { x: 182, y: 55, w: 790, h: 1404 };
 
-// Patatas mobile: w=900, h=900/1.339=672.
-// Rojo empieza al 38% de 3500=1330px. Bloque rojo: 1330-3500=2170px.
-// Centro y = 1330+1085=2415. y_fries=2415-336=2079.
-// Cortadas a la mitad: x_izq=-(900/2)=-450, x_der=1080-450=630.
-const FRIES_W = 900;
-const FRIES_H = Math.round(FRIES_W / 1.339); // 672
+// Patatas mobile (mas pequeñas que desktop): w=720, h=720/1.339=538.
+const FRIES_W = 720;
+const FRIES_H = Math.round(FRIES_W / 1.339);
 
 export const heroMobile: StageComposition = {
   canvas: HERO_CANVAS_MOBILE,
   layers: [
+    // Logo Botto: centrado, parte superior amarilla.
     {
       id: 'logo',
       kind: 'svg',
       src: '/assets/vectores/logo_botto_2.svg',
       alt: 'Botto',
-      psd: { x: 240, y: 50, w: 600, h: 210 },
+      psd: { x: 240, y: 80, w: 600, h: 210 },
       z: 5,
       tint: 'var(--color-red)',
       anim: { type: 'slide-down', duration: 800 },
     },
-    // Ketchup mobile: debajo de McBotto.com, zona amarilla.
+    // Ketchup grande izquierda en la zona amarilla, cortado por la izq.
     {
       id: 'ketchup',
       kind: 'img',
       src: '/assets/imagenes/ketchup_0_comp.png',
       alt: 'Ketchup McBotto',
-      psd: { x: 20, y: 60, w: 760, h: 1560 },
+      psd: { x: -250, y: 250, w: 700, h: 1425 },
       z: 1,
       fit: 'contain',
     },
+    // Ketchup3: arriba a la derecha, cortado por borde derecho y superior.
+    {
+      id: 'ketchup3',
+      kind: 'img',
+      src: '/assets/imagenes/ketchup3_comp.png',
+      alt: '',
+      psd: { x: 600, y: -180, w: 700, h: 1426 },
+      z: 1,
+      fit: 'contain',
+    },
+    // Maquina + video + rana + 30units + ticket: grupo con escalado linkeado.
     {
       id: 'machine-assembly',
       kind: 'group',
@@ -67,69 +80,74 @@ export const heroMobile: StageComposition = {
           z: 2,
           fit: 'contain',
         },
-        // Rana x1.5 mas grande y 150 hero-px mas lejos (mismas coords que desktop).
+        // Rana: mas pequeña que desktop, asoma por la derecha de la maquina.
+        // Canvas grupo: 1154. Rana w=720 acaba en x=1340, sobresale ~190 (visible).
         {
           id: 'rana',
           kind: 'img',
           src: '/assets/imagenes/rana_web_1_comp.png',
           alt: 'Rana coleccionable McBotto',
-          psd: { x: 1338, y: 400, w: 1200, h: 1718 },
+          psd: { x: 720, y: 700, w: 720, h: 1031 },
           z: 1,
           fit: 'contain',
           anim: { type: 'slide-right', delay: 400, duration: 900 },
         },
-        // Badge "30 units" encima de la rana.
+        // Badge "30 units" sobre la parte baja de la rana.
         {
           id: '30units',
           kind: 'img',
           src: '/assets/imagenes/30_units_comp.png',
           alt: '30 units',
-          psd: { x: 1430, y: 1300, w: 400, h: 400 },
+          psd: { x: 780, y: 1450, w: 320, h: 320 },
           z: 3,
           fit: 'contain',
           anim: { type: 'zoom', delay: 600, duration: 700 },
         },
-        // Ticket animado hover.
-        {
-          id: 'ticket',
-          kind: 'video',
-          src: '/assets/animations/tikcet_seq_1.webm',
-          psd: { x: -1400, y: 1200, w: 1000, h: 1500 },
-          z: 1,
-          fit: 'contain',
-          hoverPlay: true,
-          anim: { type: 'slide-left', delay: 400, duration: 900 },
-        },
+        // Nota: en mobile NO se renderiza el ticket animado del hero.
+        // Se traslada a una posicion encima del redeem code (ver main.ts).
       ],
     },
-    // Menu: centrado debajo de la maquina. z:6.
-    // Maquina mobile termina en y=330+2291=2621.
+    // Patatas izquierda: cortadas por el borde izquierdo, en el bloque rojo.
+    {
+      id: 'fries-left',
+      kind: 'img',
+      src: '/assets/imagenes/patatas_v2_comp.png',
+      alt: '',
+      psd: { x: -(FRIES_W * 0.6), y: 1850, w: FRIES_W, h: FRIES_H },
+      z: 3,
+      fit: 'cover',
+    },
+    // Patatas derecha: cortadas por el borde derecho, en el bloque rojo.
+    {
+      id: 'fries-right',
+      kind: 'img',
+      src: '/assets/imagenes/patatas_v2_comp.png',
+      alt: '',
+      psd: { x: 1080 - FRIES_W * 0.4, y: 1950, w: FRIES_W, h: FRIES_H },
+      z: 3,
+      fit: 'cover',
+    },
+    // Menu: ancho casi completo, solapando la base de la maquina.
+    // Ratio menu (2240/1520=1.47). w=1080 (full width), h=735.
     {
       id: 'menu',
       kind: 'img',
       src: '/assets/imagenes/menu_web_v3_comp.png',
       alt: 'Menu McBotto',
-      psd: { x: 40, y: 2150, w: 800, h: 544 },
+      psd: { x: 0, y: 2150, w: 1080, h: 735 },
       z: 6,
       fit: 'contain',
     },
+    // Piernas del payaso: asoman justo por debajo del menu.
+    // Menu termina en y=2885; piernas en y=2780 para solapar un poco.
+    // Ratio piernas (840/630=1.33). w=540, h=405.
     {
       id: 'piernas',
       kind: 'img',
       src: '/assets/imagenes/piernas_payaso_comp.png',
       alt: '',
-      psd: { x: 140, y: 2800, w: 800, h: 600 },
+      psd: { x: 270, y: 2780, w: 540, h: 405 },
       z: 5,
-      fit: 'contain',
-    },
-    // Ketchup3: arriba a la derecha, cortado por borde derecho y superior.
-    {
-      id: 'ketchup3',
-      kind: 'img',
-      src: '/assets/imagenes/ketchup3_comp.png',
-      alt: '',
-      psd: { x: 700, y: -250, w: 560, h: 1141 },
-      z: 1,
       fit: 'contain',
     },
     // Ketchup a la derecha de las piernas, cortado por el borde derecho.
@@ -138,29 +156,9 @@ export const heroMobile: StageComposition = {
       kind: 'img',
       src: '/assets/imagenes/ketchup_1_comp.png',
       alt: '',
-      psd: { x: 720, y: 2450, w: 560, h: 1141 },
+      psd: { x: 580, y: 2700, w: 900, h: 1832 },
       z: 1,
       fit: 'contain',
-    },
-    // Fries izquierda (v2).
-    {
-      id: 'fries-left',
-      kind: 'img',
-      src: '/assets/imagenes/patatas_v2_comp.png',
-      alt: '',
-      psd: { x: -(FRIES_W * 0.72), y: 2050, w: FRIES_W, h: FRIES_H },
-      z: 3,
-      fit: 'cover',
-    },
-    // Fries derecha (v4).
-    {
-      id: 'fries-right',
-      kind: 'img',
-      src: '/assets/imagenes/patatas_v2_comp.png',
-      alt: '',
-      psd: { x: 1080 - FRIES_W * 0.28, y: 2150, w: FRIES_W, h: FRIES_H },
-      z: 3,
-      fit: 'cover',
     },
   ],
 };

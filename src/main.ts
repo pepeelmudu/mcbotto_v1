@@ -107,6 +107,128 @@ redeemWrapper.appendChild(ticketLeft);
 redeemWrapper.appendChild(ticketLeft2);
 redeemWrapper.appendChild(redeemForm);
 redeemWrapper.appendChild(ticketRight);
+
+// Ticket animado (solo visible en mobile via CSS). Se renderiza en un
+// <canvas>, mostrando frames pre-extraidos del WebM en orden inverso. Asi
+// la animacion va totalmente fluida (el seek random en WebM es lentisimo
+// y no funciona frame a frame en Chrome).
+// - Estado inicial: ultimo frame fijo en el canvas.
+// - Al entrar al viewport: se reproduce en orden inverso.
+// - Al hacer click: vuelve a disparar la animacion reverse.
+const ticketAnim = document.createElement('div');
+ticketAnim.className = 'redeem-ticket-anim';
+ticketAnim.style.cursor = 'pointer';
+
+const ticketCanvas = document.createElement('canvas');
+ticketCanvas.style.cssText = 'width:100%;height:100%;display:block;';
+ticketAnim.appendChild(ticketCanvas);
+const ticketCtx = ticketCanvas.getContext('2d');
+
+// Video "fuente" para extraer los frames. Lo escondemos absolutamente para
+// que cargue pero no se muestre.
+const ticketVideo = document.createElement('video');
+ticketVideo.muted = true;
+ticketVideo.playsInline = true;
+ticketVideo.preload = 'auto';
+ticketVideo.crossOrigin = 'anonymous';
+ticketVideo.setAttribute('muted', '');
+ticketVideo.setAttribute('playsinline', '');
+ticketVideo.style.cssText =
+  'position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
+const ticketVideoSource = document.createElement('source');
+ticketVideoSource.src = '/assets/animations/tikcet_seq_1.webm';
+ticketVideoSource.type = 'video/webm';
+ticketVideo.appendChild(ticketVideoSource);
+document.body.appendChild(ticketVideo);
+
+const FRAME_FPS = 30;
+const ticketFrames: ImageBitmap[] = [];
+let framesReady = false;
+let rewindTimer: number | null = null;
+// Si entra al viewport antes de tener los frames listos, queda pendiente.
+let pendingPlay = false;
+
+const drawTicketFrame = (idx: number): void => {
+  if (!ticketCtx || !ticketFrames[idx]) return;
+  ticketCtx.clearRect(0, 0, ticketCanvas.width, ticketCanvas.height);
+  ticketCtx.drawImage(ticketFrames[idx], 0, 0, ticketCanvas.width, ticketCanvas.height);
+};
+
+const waitFor = <T extends Event>(target: EventTarget, type: string): Promise<T> =>
+  new Promise((resolve) => target.addEventListener(type, (e) => resolve(e as T), { once: true }));
+
+const extractTicketFrames = async (): Promise<void> => {
+  if (ticketVideo.readyState < 1 || !isFinite(ticketVideo.duration)) {
+    await waitFor(ticketVideo, 'loadedmetadata');
+  }
+  if (!isFinite(ticketVideo.duration) || ticketVideo.duration <= 0) return;
+
+  ticketCanvas.width = ticketVideo.videoWidth || 650;
+  ticketCanvas.height = ticketVideo.videoHeight || 975;
+
+  const numFrames = Math.max(2, Math.round(ticketVideo.duration * FRAME_FPS));
+  for (let i = 0; i < numFrames; i++) {
+    // 0.99 para no caer exactamente en duration (algunos videos disparan 'ended')
+    const t = (i / (numFrames - 1)) * ticketVideo.duration * 0.99;
+    ticketVideo.currentTime = t;
+    await waitFor(ticketVideo, 'seeked');
+    try {
+      const bitmap = await createImageBitmap(ticketVideo);
+      ticketFrames.push(bitmap);
+    } catch {
+      // Si createImageBitmap falla en algun frame, lo saltamos.
+    }
+  }
+  framesReady = true;
+  drawTicketFrame(ticketFrames.length - 1);
+  if (pendingPlay) {
+    pendingPlay = false;
+    startTicketReverse();
+  }
+};
+void extractTicketFrames();
+
+const stopTicketRewind = (): void => {
+  if (rewindTimer !== null) {
+    clearInterval(rewindTimer);
+    rewindTimer = null;
+  }
+};
+
+const startTicketReverse = (): void => {
+  if (!framesReady || ticketFrames.length === 0) return;
+  stopTicketRewind();
+  let idx = ticketFrames.length - 1;
+  drawTicketFrame(idx);
+  rewindTimer = window.setInterval(() => {
+    idx -= 1;
+    if (idx < 0) {
+      stopTicketRewind();
+      drawTicketFrame(0);
+      return;
+    }
+    drawTicketFrame(idx);
+  }, 1000 / FRAME_FPS);
+};
+
+ticketAnim.addEventListener('click', () => {
+  if (framesReady) startTicketReverse();
+  else pendingPlay = true;
+});
+
+const ticketAnimObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      if (framesReady) startTicketReverse();
+      else pendingPlay = true;
+    });
+  },
+  { threshold: 0.4 }
+);
+ticketAnimObserver.observe(ticketAnim);
+
+redeemWrapper.appendChild(ticketAnim);
 yellowSection.appendChild(redeemWrapper);
 
 // TV debajo del redeem form
@@ -165,7 +287,7 @@ siteLabel.textContent = 'McBotto.com';
 document.body.appendChild(siteLabel);
 
 const audioController = mountAudioToggle(document.body, {
-  src: '/assets/sound/mc_sound.mp3',
+  src: '/assets/sound/mc_sound_comp.mp3',
   volume: 0.4,
   startMuted: false,
 });
