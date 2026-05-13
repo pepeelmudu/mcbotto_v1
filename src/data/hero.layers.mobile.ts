@@ -80,25 +80,24 @@ export const heroMobile: StageComposition = {
           z: 2,
           fit: 'contain',
         },
-        // Rana: mas pequeña que desktop, asoma por la derecha de la maquina.
-        // Canvas grupo: 1154. Rana w=720 acaba en x=1340, sobresale ~190 (visible).
+        // Rana: 20% mas pequeña y desplazada a la izquierda.
         {
           id: 'rana',
           kind: 'img',
           src: '/assets/imagenes/rana_web_1_comp.png',
           alt: 'Rana coleccionable McBotto',
-          psd: { x: 720, y: 700, w: 720, h: 1031 },
+          psd: { x: 800, y: 400, w: 1152, h: 1650 },
           z: 1,
           fit: 'contain',
           anim: { type: 'slide-right', delay: 400, duration: 900 },
         },
-        // Badge "30 units" sobre la parte baja de la rana.
+        // Badge "30 units" sobre la rana (acompañada hacia la izquierda).
         {
           id: '30units',
           kind: 'img',
           src: '/assets/imagenes/30_units_comp.png',
           alt: '30 units',
-          psd: { x: 780, y: 1450, w: 320, h: 320 },
+          psd: { x: 1000, y: 1150, w: 360, h: 360 },
           z: 3,
           fit: 'contain',
           anim: { type: 'zoom', delay: 600, duration: 700 },
