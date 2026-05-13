@@ -113,13 +113,12 @@ redeemWrapper.appendChild(ticketLeft2);
 redeemWrapper.appendChild(redeemForm);
 redeemWrapper.appendChild(ticketRight);
 
-// Ticket animado (solo visible en mobile via CSS). Se renderiza en un
-// <canvas>, mostrando frames pre-extraidos del WebM en orden inverso. Asi
-// la animacion va totalmente fluida (el seek random en WebM es lentisimo
-// y no funciona frame a frame en Chrome).
-// - Estado inicial: ultimo frame fijo en el canvas.
-// - Al entrar al viewport: se reproduce en orden inverso.
-// - Al hacer click: vuelve a disparar la animacion reverse.
+// ── Ticket animado (mobile only via CSS) ──────────────────────────────────
+// Robusto: pinta el ultimo frame del video INMEDIATAMENTE (drawImage directo)
+// para que el ticket sea visible siempre. Luego intenta pre-extraer frames
+// para hacer reverse playback fluido. Si la extraccion falla, al menos el
+// poster ya esta dibujado y el ticket se ve.
+// Fallback final: si el video no carga, mostramos un PNG estatico.
 const ticketAnim = document.createElement('div');
 ticketAnim.className = 'redeem-ticket-anim';
 ticketAnim.style.cursor = 'pointer';
@@ -129,13 +128,21 @@ ticketCanvas.style.cssText = 'width:100%;height:100%;display:block;';
 ticketAnim.appendChild(ticketCanvas);
 const ticketCtx = ticketCanvas.getContext('2d');
 
-// Video "fuente" para extraer los frames. Lo escondemos absolutamente para
-// que cargue pero no se muestre.
+// Fallback PNG: oculto por defecto, se muestra solo si todo lo demas falla.
+const ticketFallback = document.createElement('img');
+ticketFallback.src = '/assets/imagenes/ticket_web_v2_comp.png';
+ticketFallback.alt = '';
+ticketFallback.style.cssText =
+  'width:100%;height:100%;display:none;object-fit:contain;position:absolute;inset:0;';
+ticketAnim.style.position = 'relative';
+ticketAnim.appendChild(ticketFallback);
+
+// Video oculto fuente. SIN crossOrigin (evita problemas CORS con WebMs servidos
+// sin headers CORS, comun en Vercel/Vite).
 const ticketVideo = document.createElement('video');
 ticketVideo.muted = true;
 ticketVideo.playsInline = true;
 ticketVideo.preload = 'auto';
-ticketVideo.crossOrigin = 'anonymous';
 ticketVideo.setAttribute('muted', '');
 ticketVideo.setAttribute('playsinline', '');
 ticketVideo.style.cssText =
@@ -147,51 +154,141 @@ ticketVideo.appendChild(ticketVideoSource);
 document.body.appendChild(ticketVideo);
 
 const FRAME_FPS = 30;
+const FRAME_LIMIT = 60; // limite duro para no quedarse extrayendo sin fin
 const ticketFrames: ImageBitmap[] = [];
 let framesReady = false;
+let posterDrawn = false;
 let rewindTimer: number | null = null;
-// Si entra al viewport antes de tener los frames listos, queda pendiente.
 let pendingPlay = false;
 
-const drawTicketFrame = (idx: number): void => {
+const log = (msg: string, ...rest: unknown[]): void => {
+  // eslint-disable-next-line no-console
+  console.log('[ticket-anim]', msg, ...rest);
+};
+
+const showTicketFallback = (): void => {
+  log('usando fallback PNG');
+  ticketCanvas.style.display = 'none';
+  ticketFallback.style.display = 'block';
+};
+
+const drawCurrentVideoFrame = (): boolean => {
+  if (!ticketCtx) return false;
+  const vw = ticketVideo.videoWidth;
+  const vh = ticketVideo.videoHeight;
+  if (vw === 0 || vh === 0) return false;
+  try {
+    if (ticketCanvas.width !== vw) ticketCanvas.width = vw;
+    if (ticketCanvas.height !== vh) ticketCanvas.height = vh;
+    ticketCtx.clearRect(0, 0, vw, vh);
+    ticketCtx.drawImage(ticketVideo, 0, 0, vw, vh);
+    posterDrawn = true;
+    return true;
+  } catch (err) {
+    log('drawImage video fallo', err);
+    return false;
+  }
+};
+
+const drawBitmapFrame = (idx: number): void => {
   if (!ticketCtx || !ticketFrames[idx]) return;
   ticketCtx.clearRect(0, 0, ticketCanvas.width, ticketCanvas.height);
   ticketCtx.drawImage(ticketFrames[idx], 0, 0, ticketCanvas.width, ticketCanvas.height);
 };
 
-const waitFor = <T extends Event>(target: EventTarget, type: string): Promise<T> =>
-  new Promise((resolve) => target.addEventListener(type, (e) => resolve(e as T), { once: true }));
-
-const extractTicketFrames = async (): Promise<void> => {
-  if (ticketVideo.readyState < 1 || !isFinite(ticketVideo.duration)) {
-    await waitFor(ticketVideo, 'loadedmetadata');
-  }
-  if (!isFinite(ticketVideo.duration) || ticketVideo.duration <= 0) return;
-
-  ticketCanvas.width = ticketVideo.videoWidth || 650;
-  ticketCanvas.height = ticketVideo.videoHeight || 975;
-
-  const numFrames = Math.max(2, Math.round(ticketVideo.duration * FRAME_FPS));
-  for (let i = 0; i < numFrames; i++) {
-    // 0.99 para no caer exactamente en duration (algunos videos disparan 'ended')
-    const t = (i / (numFrames - 1)) * ticketVideo.duration * 0.99;
+// seek con timeout: si 'seeked' no dispara en N ms, resolvemos igualmente.
+const seekVideo = (t: number, timeoutMs = 500): Promise<void> =>
+  new Promise((resolve) => {
+    let done = false;
+    const finish = (): void => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      ticketVideo.removeEventListener('seeked', finish);
+      resolve();
+    };
+    ticketVideo.addEventListener('seeked', finish, { once: true });
+    const timer = setTimeout(finish, timeoutMs);
     ticketVideo.currentTime = t;
-    await waitFor(ticketVideo, 'seeked');
-    try {
-      const bitmap = await createImageBitmap(ticketVideo);
-      ticketFrames.push(bitmap);
-    } catch {
-      // Si createImageBitmap falla en algun frame, lo saltamos.
+  });
+
+const waitForMetadata = (timeoutMs = 4000): Promise<boolean> =>
+  new Promise((resolve) => {
+    if (ticketVideo.readyState >= 1 && ticketVideo.videoWidth > 0) {
+      resolve(true);
+      return;
     }
+    let done = false;
+    const ok = (): void => {
+      if (done) return;
+      done = true;
+      cleanup();
+      resolve(ticketVideo.videoWidth > 0);
+    };
+    const fail = (): void => {
+      if (done) return;
+      done = true;
+      cleanup();
+      resolve(false);
+    };
+    const cleanup = (): void => {
+      ticketVideo.removeEventListener('loadedmetadata', ok);
+      ticketVideo.removeEventListener('loadeddata', ok);
+      ticketVideo.removeEventListener('error', fail);
+      clearTimeout(timer);
+    };
+    ticketVideo.addEventListener('loadedmetadata', ok);
+    ticketVideo.addEventListener('loadeddata', ok);
+    ticketVideo.addEventListener('error', fail);
+    const timer = setTimeout(fail, timeoutMs);
+  });
+
+const setupTicket = async (): Promise<void> => {
+  const loaded = await waitForMetadata();
+  if (!loaded) {
+    showTicketFallback();
+    return;
   }
+
+  // Duracion: si es Infinity / NaN, usamos un fallback razonable.
+  let duration = ticketVideo.duration;
+  if (!isFinite(duration) || duration <= 0) {
+    log('duration invalido, asumiendo 2s', duration);
+    duration = 2;
+  }
+
+  // 1) Pinta el ULTIMO frame YA (poster inmediato → ticket visible siempre).
+  await seekVideo(duration * 0.99);
+  drawCurrentVideoFrame();
+
+  // 2) Intenta pre-extraer frames para reverse playback fluido.
+  const numFrames = Math.max(2, Math.min(FRAME_LIMIT, Math.round(duration * FRAME_FPS)));
+  for (let i = 0; i < numFrames; i++) {
+    const t = (i / (numFrames - 1)) * duration * 0.99;
+    await seekVideo(t);
+    let bitmap: ImageBitmap | null = null;
+    try {
+      bitmap = await createImageBitmap(ticketVideo);
+    } catch (err) {
+      log(`createImageBitmap fail frame ${i}`, err);
+    }
+    if (bitmap) ticketFrames.push(bitmap);
+  }
+
+  if (ticketFrames.length < 2) {
+    log(`solo ${ticketFrames.length} frames extraidos: mantenemos poster, sin reverse anim`);
+    // El poster del paso 1 sigue ahi, asi que igualmente se ve.
+    return;
+  }
+
   framesReady = true;
-  drawTicketFrame(ticketFrames.length - 1);
+  drawBitmapFrame(ticketFrames.length - 1);
+
   if (pendingPlay) {
     pendingPlay = false;
     startTicketReverse();
   }
 };
-void extractTicketFrames();
 
 const stopTicketRewind = (): void => {
   if (rewindTimer !== null) {
@@ -204,21 +301,24 @@ const startTicketReverse = (): void => {
   if (!framesReady || ticketFrames.length === 0) return;
   stopTicketRewind();
   let idx = ticketFrames.length - 1;
-  drawTicketFrame(idx);
+  drawBitmapFrame(idx);
   rewindTimer = window.setInterval(() => {
     idx -= 1;
     if (idx < 0) {
       stopTicketRewind();
-      drawTicketFrame(0);
+      // Queda congelado en el PRIMER frame (estado final del reverse).
+      drawBitmapFrame(0);
       return;
     }
-    drawTicketFrame(idx);
+    drawBitmapFrame(idx);
   }, 1000 / FRAME_FPS);
 };
 
+void setupTicket();
+
 ticketAnim.addEventListener('click', () => {
   if (framesReady) startTicketReverse();
-  else pendingPlay = true;
+  else if (!posterDrawn) pendingPlay = true;
 });
 
 const ticketAnimObserver = new IntersectionObserver(
@@ -226,7 +326,7 @@ const ticketAnimObserver = new IntersectionObserver(
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       if (framesReady) startTicketReverse();
-      else pendingPlay = true;
+      else if (!posterDrawn) pendingPlay = true;
     });
   },
   { threshold: 0.4 }
