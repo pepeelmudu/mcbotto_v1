@@ -162,8 +162,8 @@
        no queda ninguna franja amarilla intermedia. */
     margin-top: -1vw;
     /* padding-top: burguer 82.5vw con top:-25vw → bottom ~57.5vw del top
-       del scrub. Mas ~10vw de hueco al titular = 67.5vw. */
-    padding: 68vw 0 14vw;
+       del scrub. Hueco al titular reducido a ~3vw. */
+    padding: 60vw 0 14vw;
   }
 
   .scrub-content {
