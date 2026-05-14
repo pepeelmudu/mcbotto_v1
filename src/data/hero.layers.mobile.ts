@@ -133,7 +133,7 @@ export const heroMobile: StageComposition = {
     {
       id: 'menu',
       kind: 'img',
-      src: '/assets/imagenes/menu_web_v4_comp.png',
+      src: '/assets/imagenes/menu_web_v6_comp.png',
       alt: 'Menu McBotto',
       psd: { x: -270, y: 1783, w: 1620, h: 1102 },
       z: 6,

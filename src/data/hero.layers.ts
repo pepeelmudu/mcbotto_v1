@@ -125,7 +125,7 @@ export const heroDesktop: StageComposition = {
     {
       id: 'menu',
       kind: 'img',
-      src: '/assets/imagenes/menu_web_v4_comp.png',
+      src: '/assets/imagenes/menu_web_v6_comp.png',
       alt: 'Menu McBotto',
       psd: { x: -160, y: 2100, w: 2240, h: 1520 },
       z: 6,
