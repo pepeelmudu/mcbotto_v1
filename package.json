@@ -13,6 +13,7 @@
     "vite": "^5.4.10"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "medium-zoom": "^1.1.0"
   }
 }

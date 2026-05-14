@@ -10,11 +10,17 @@ import './styles/modal.css';
 import './styles/scroll-anim-section.css';
 import './styles/loader.css';
 
+import { inject } from '@vercel/analytics';
+
 import { mountMarquee } from './sections/marquee';
 import { mountHero } from './sections/hero';
 import { mountAudioToggle } from './lib/audio';
 import { mountScrollAnimSection } from './sections/scroll-anim-section';
 import { mountLoader } from './sections/loader';
+
+// Vercel Web Analytics: solo carga el script en produccion (en local lo
+// inyecta pero no envia eventos a Vercel).
+inject();
 
 const root = document.getElementById('app');
 if (!root) {

@@ -28,7 +28,7 @@ export function mountHero(root: HTMLElement, options: HeroOptions = {}): () => v
   // Click en la pantalla de la maquina → abre el modal con el menu
   section.addEventListener('click', (e) => {
     const layer = (e.target as Element).closest('[data-id="screen"]');
-    if (layer) openModal('/assets/imagenes/menu2_low_comp.png', 'Menu McBotto');
+    if (layer) openModal('/assets/imagenes/menu2_low_comp_v2.png', 'Menu McBotto');
   });
 
   // Click en el ticket → scroll suave al formulario Redeem Code

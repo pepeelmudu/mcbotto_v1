@@ -2,10 +2,10 @@
   position: fixed;
   /* Lo ubicamos por debajo de la marquesina fija para que no se pisen */
   top: calc(var(--marquee-height, 2rem) + var(--space-3));
-  right: var(--space-4);
+  right: 40px;
   z-index: 100;
-  width: 34px;
-  height: 34px;
+  width: 51px;
+  height: 51px;
   border-radius: 999px;
   background: var(--color-red);
   color: var(--color-yellow);
@@ -32,8 +32,8 @@
 }
 
 .audio-toggle svg {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
 }
 
 /* Anillo pulsante cuando esta sonando */
@@ -93,12 +93,12 @@
   .audio-toggle {
     top: calc(var(--marquee-height, 2rem) + var(--space-2));
     right: var(--space-3);
-    width: 30px;
-    height: 30px;
+    width: 45px;
+    height: 45px;
   }
   .audio-toggle svg {
-    width: 14px;
-    height: 14px;
+    width: 21px;
+    height: 21px;
   }
   .site-label {
     top: calc(var(--marquee-height, 2rem) + var(--space-2));

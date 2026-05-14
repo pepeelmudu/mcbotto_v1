@@ -1,0 +1,26 @@
+{
+  "name": "McBotto",
+  "short_name": "McBotto",
+  "description": "ElevenYellow presents McBotto — Botto's first collection of physical art toys.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffc700",
+  "theme_color": "#e41d22",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/assets/vectores/favicon_1.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/imagenes/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
