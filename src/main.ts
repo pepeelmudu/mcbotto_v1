@@ -83,18 +83,58 @@ tvVideo.addEventListener('click', () => {
   else { tvVideo.pause(); }
 });
 
-// Formulario Redeem Code
+// CTA al evento de Luma. El boton PNG es el enlace: al pulsar cambia al
+// boton_seq_2.png y tras un pequeno delay abre el evento en una nueva pestana.
+const LUMA_EVENT_URL = 'https://luma.com/z69m63lu';
+
+// Pre-carga la imagen del estado "pulsado" para que el swap sea instantaneo.
+const buttonSeq2Preload = new Image();
+buttonSeq2Preload.src = '/assets/animations/button/boton_seq_2.png';
+
 const redeemForm = document.createElement('div');
 redeemForm.className = 'redeem-form';
 redeemForm.id = 'redeem';
 redeemForm.innerHTML = `
-  <p class="redeem-title">Redeem code</p>
-  <form class="redeem-fields" onsubmit="return false;">
-    <input class="redeem-input" type="text" placeholder="Code" autocomplete="off" />
-    <input class="redeem-input" type="email" placeholder="Email" autocomplete="email" />
-    <button class="redeem-btn" type="submit">Submit</button>
-  </form>
+  <p class="redeem-title">Go to event</p>
+  <a
+    class="redeem-button-link"
+    href="${LUMA_EVENT_URL}"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <img
+      class="redeem-button"
+      src="/assets/animations/button/boton_seq_1.png"
+      alt="Go to event"
+    />
+  </a>
 `;
+
+const redeemButtonLink = redeemForm.querySelector('.redeem-button-link') as HTMLAnchorElement | null;
+const redeemButtonImg = redeemForm.querySelector('.redeem-button') as HTMLImageElement | null;
+
+if (redeemButtonLink && redeemButtonImg) {
+  const BTN_SEQ_1 = '/assets/animations/button/boton_seq_1.png';
+  const BTN_SEQ_2 = '/assets/animations/button/boton_seq_2.png';
+  let isPressing = false;
+
+  redeemButtonLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (isPressing) return;
+    isPressing = true;
+
+    // png2 (pulsado) durante 500ms → png1 (suelto) → abre el evento en nueva
+    // pestaña. window.open dentro de setTimeout < 1000ms se sigue considerando
+    // gesto del usuario en Chrome/Firefox/Safari, asi que NO se bloquea.
+    redeemButtonImg.src = BTN_SEQ_2;
+
+    window.setTimeout(() => {
+      redeemButtonImg.src = BTN_SEQ_1;
+      window.open(LUMA_EVENT_URL, '_blank', 'noopener,noreferrer');
+      isPressing = false;
+    }, 500);
+  });
+}
 // Wrapper: ticket izq + redeem form + ticket der
 const redeemWrapper = document.createElement('div');
 redeemWrapper.className = 'redeem-wrapper';
